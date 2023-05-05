@@ -16,10 +16,18 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/marti/OneDrive/Desktop/jcalendar-1.4 (1)/lib/jcalendar-1.4.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/marti/.p2/pool/plugins/org.junit.jupiter.api_5.7.1.v20210222-1948.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://junit.org/junit5/docs/current/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="jgoodies-common-1.2.0.jar"/>
+	<classpathentry kind="lib" path="jgoodies-looks-2.4.1.jar"/>
+	<classpathentry kind="lib" path="junit-4.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

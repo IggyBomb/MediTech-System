@@ -54,12 +54,6 @@ public class GestionnaireAdministratifSwing extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		// Patient ID label and text field
-		JLabel idLabel = new JLabel("Patient ID:");
-		JTextField idField = new JTextField();
-		panel.add(idLabel);
-		panel.add(idField);
-
 		// Create patient table and model
 		patientTable = new JTable();
 		DefaultTableModel patientTableModel = new DefaultTableModel();
@@ -78,7 +72,7 @@ public class GestionnaireAdministratifSwing extends JFrame {
 		JButton insertButton = new JButton("Insert Patient");
 		insertButton.addActionListener(new InsertPatient(gestionnaire));
 		panel.add(insertButton);
-		
+
 		// Insert button
 		JButton deleteButton = new JButton("Delete Patient");
 		deleteButton.addActionListener(new DeleteButton(gestionnaire));
@@ -181,46 +175,44 @@ public class GestionnaireAdministratifSwing extends JFrame {
 			JTextField idField = new JTextField();
 			searchPanel.add(idLabel);
 			searchPanel.add(idField);
-			String id = idField.getText();
-			Patient patient = gestionnaire.findByID(id);
-			if (patient == null) {
-				JOptionPane.showMessageDialog(frame, "No patient found with that ID.", "Search results", JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				// Update the patient information fields with the patient data
-				idField.setText(patient.getIdPatient());
-				JTextField nomField = new JTextField();
-				nomField.setText(patient.getNom());
-				JTextField prenomField = new JTextField();
-				prenomField.setText(patient.getPrenom());
-				JTextField dateNaissanceField = new JTextField();
-				dateNaissanceField.setText(patient.getDateNaissance().toString());
-				JTextField adresseField = new JTextField();
-				adresseField.setText(patient.getAdresse());
-				// Show the patient information in a dialog box
-				JPanel patientPanel = new JPanel();
-				patientPanel.setLayout(new BoxLayout(patientPanel, BoxLayout.Y_AXIS));
-				patientPanel.add(new JLabel("ID:"));
-				patientPanel.add(idField);
-				patientPanel.add(new JLabel("Nom:"));
-				patientPanel.add(nomField);
-				patientPanel.add(new JLabel("Prénom:"));
-				patientPanel.add(prenomField);
-				patientPanel.add(new JLabel("Date de naissance:"));
-				patientPanel.add(dateNaissanceField);
-				patientPanel.add(new JLabel("Adresse:"));
-				patientPanel.add(adresseField);
-				JOptionPane.showMessageDialog(frame, patientPanel, "Search results", JOptionPane.INFORMATION_MESSAGE);
+
+			// Show the search panel in a dialog box
+			int result = JOptionPane.showConfirmDialog(frame, searchPanel, "Search by ID", JOptionPane.OK_CANCEL_OPTION);
+			if (result == JOptionPane.OK_OPTION) {
+				String searchId = idField.getText();
+				Patient patient = gestionnaire.findByID(searchId);
+				if (patient == null) {
+					JOptionPane.showMessageDialog(frame, "No patient found with that ID.", "Search results", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					// Update the patient information fields with the patient data
+					idField.setText(patient.getIdPatient());
+					JTextField nomField = new JTextField();
+					nomField.setText(patient.getNom());
+					JTextField prenomField = new JTextField();
+					prenomField.setText(patient.getPrenom());
+					JTextField dateNaissanceField = new JTextField();
+					dateNaissanceField.setText(patient.getDateNaissance().toString());
+					JTextField adresseField = new JTextField();
+					adresseField.setText(patient.getAdresse());
+					// Show the patient information in a dialog box
+					JPanel patientPanel = new JPanel();
+					patientPanel.setLayout(new BoxLayout(patientPanel, BoxLayout.Y_AXIS));
+					patientPanel.add(new JLabel("ID:"));
+					patientPanel.add(idField);
+					patientPanel.add(new JLabel("Nom:"));
+					patientPanel.add(nomField);
+					patientPanel.add(new JLabel("Prénom:"));
+					patientPanel.add(prenomField);
+					patientPanel.add(new JLabel("Date de naissance:"));
+					patientPanel.add(dateNaissanceField);
+					patientPanel.add(new JLabel("Adresse:"));
+					patientPanel.add(adresseField);
+					JOptionPane.showMessageDialog(frame, patientPanel, "Search results", JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
+
 		}
 	}
-
-
-
-
-
-
-
-
 
 
 	/*

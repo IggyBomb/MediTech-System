@@ -11,7 +11,7 @@ import formulaires.GestionnaireConsultation;
 public class Main {
 
 	public static void main(String[] args) {
-		GestionnaireAdministratifSwing ga = new GestionnaireAdministratifSwing("root", "T1t4n1c0");
+		
 
 	}
 
