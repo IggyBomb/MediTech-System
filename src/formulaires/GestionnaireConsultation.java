@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+
+import Acteurs.Patient;
 import Consultation.Consultation;
 
 public class GestionnaireConsultation {
@@ -69,6 +71,38 @@ public class GestionnaireConsultation {
 	    }
 	    return listConsultation;
 	}
+	
+	/*
+	// search all the consultation with the same patient, using the Name of the patient as key
+		public List<Consultation> listConsultationPatientByName(String fullName){
+			GestionnaireAdministratif ga = new GestionnaireAdministratif("root", "T1t4n1c0");
+			List<Patient> patients = ga.searchPatientsByName(fullName);
+			
+			Patient newPatient;
+			List<Consultation> listConsultation = new ArrayList<Consultation>();
+			String sql = "SELECT";
+			try {
+		        PreparedStatement pstmt = connection.prepareStatement(sql);
+		        pstmt.setString(1, lastName);
+		        pstmt.setString(2, firstName);
+		        ResultSet rs = pstmt.executeQuery();
+		        while (rs.next()) {
+		            String IdConsult = rs.getString("IdConsult");
+		            String patient = rs.getString("PatientID");
+		            String medicin = rs.getString("MedecinID");
+		            String details = rs.getString("DetailsCliniques");
+		            LocalDateTime dateConsult = rs.getTimestamp("Date").toLocalDateTime();
+		            Consultation consultation = new Consultation(IdConsult, patient, medicin, details, dateConsult);
+		            listConsultation.add(consultation);
+		        }
+		        pstmt.close();
+		        rs.close();
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return listConsultation;
+		}
+		*/
 	
 	/**
 	 * Add a consultation from the database.
@@ -173,5 +207,33 @@ public class GestionnaireConsultation {
 	    }
 	    return str.toString();
 	}
+	
+	/**
+	This method gets Name of a patient using their ID. It returns a String
+	containing the patient's last name and first name
+	@param idPatient the ID of the patient to search for
+	@return a formatted String with the patient's details, including their antecedents
+	*/
+	public String NamePatient(String idPatient) {
+	    StringBuilder str = new StringBuilder();
+	    String sql = "SELECT Nom, Prenom FROM patient WHERE IdPatient = ?";
+	    try {
+	        //get the id of the patient
+	        PreparedStatement pstmt = connection.prepareStatement(sql);
+	        pstmt.setString(1, idPatient);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            String nom = rs.getString("Nom");
+	            String prenom = rs.getString("Prenom");
+	            str.append(nom).append(" ").append(prenom).append("\n");
+	        }
+	        pstmt.close();
+	        rs.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return str.toString();
+	}
+	
 }
 

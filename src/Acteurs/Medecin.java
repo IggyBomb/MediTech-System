@@ -6,5 +6,10 @@ public class Medecin extends Employee{
 		super(id, nom, prenom, adresse, Salaire);
 		// TODO Auto-generated constructor stub
 	}
+	
+    @Override
+    public String toString() {
+        return this.getNom() + " " + this.getPrenom();
+    }
 
 }
