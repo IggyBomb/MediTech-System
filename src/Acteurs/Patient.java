@@ -77,6 +77,11 @@ public class Patient {
 	public void setDossier(Dossier dossier) {
 		this.dossier = dossier;
 	}
+	
+    @Override
+    public String toString() {
+        return getNom() + " " + getPrenom();
+    }
 
 
 	

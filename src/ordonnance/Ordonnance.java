@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -42,26 +43,28 @@ public class Ordonnance {
 	 * 
 	 * @return true if the ordonnance was added successfully, false otherwise
 	 */
-	public boolean addOrdonnance() {
-		String sql = "INSERT INTO ordonnance (idOrdonnance, propositionsSoins, medicaments, dateCreation, appareilMedical, deviceStatus, consultationId) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try {
-			PreparedStatement pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, this.getIdOrdonnance());
-			pstmt.setString(2, this.getPropositionsSoins());
-			pstmt.setString(3, this.getMedicaments());
-			pstmt.setTimestamp(4, Timestamp.valueOf(this.getDateCreation()));
-			pstmt.setString(5, this.getAppareilMedical());
-			pstmt.setString(6, this.getDeviceStatus());
-			pstmt.setString(7, this.getConsultation().getIdConsult());
-			int rowsAffected = pstmt.executeUpdate();
-			pstmt.close();
-			if (rowsAffected > 0) {
-				return true;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+	public boolean addOrdonnance() throws SQLIntegrityConstraintViolationException {
+	    String sql = "INSERT INTO ordonnance (idOrdonnance, propositionsSoins, medicaments, dateCreation, appareilMedical, deviceStatus, consultationId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	    try {
+	        PreparedStatement pstmt = connection.prepareStatement(sql);
+	        pstmt.setString(1, this.getIdOrdonnance());
+	        pstmt.setString(2, this.getPropositionsSoins());
+	        pstmt.setString(3, this.getMedicaments());
+	        pstmt.setTimestamp(4, Timestamp.valueOf(this.getDateCreation()));
+	        pstmt.setString(5, this.getAppareilMedical());
+	        pstmt.setString(6, this.getDeviceStatus());
+	        pstmt.setString(7, this.getConsultation().getIdConsult());
+	        int rowsAffected = pstmt.executeUpdate();
+	        pstmt.close();
+	        if (rowsAffected > 0) {
+	            return true;
+	        }
+	    } catch (SQLIntegrityConstraintViolationException e) {
+	        throw e;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 
 	public boolean updateOrdonnance() {

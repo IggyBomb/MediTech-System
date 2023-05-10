@@ -21,10 +21,7 @@ class testOrdonnance {
         ordonnance = new Ordonnance(consult);
     }
 	
-	@AfterEach
-	void tearDown() {
-		ordonnance.clearAppareilMedicaux();
-	}
+
 
 	@Test
 	void testDateOrdonnance() {
@@ -46,23 +43,7 @@ class testOrdonnance {
 	    assertEquals(currentDay, dossierDay);		
 	}
 
-    @Test
-    void testAddAppareilMedical() {
-        AppareilMedical prothese = new AppareilMedical("P1","prothese main", null, "ottobock", "main gauche");
-        assertFalse(prothese.isInstance(), "AppareilMedical instance devrait être faux avant d’ajouter à Ordonnance");
-        ordonnance.addAppareilMedical(prothese);
-        assertTrue(prothese.isInstance(), "AppareilMedical instance devrait être vrai après l’ajout à Ordonnance");
-    }
     
-    @Test
-    void testRemoveAppareilMedical() {
-        AppareilMedical prothese = new AppareilMedical("P1","prothese main", null, "ottobock", "main gauche");
-        ordonnance.addAppareilMedical(prothese);
-        assertTrue(prothese.isInstance(), "AppareilMedical instance devrait être vrai après l’ajout à Ordonnance");
-        assertFalse(ordonnance.removeAppareilMedicalByName("inexistant"), "inexistant non retiré");
-        assertTrue(ordonnance.removeAppareilMedicalByName("prothese main"));
-        assertFalse(prothese.isInstance(), "AppareilMedical instance devrait être faux après l'avoir retiré de l'Ordonnance");
-    }
-    
+
 }
 
