@@ -3,11 +3,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 import formulaires.SingleConnection;
 import ordonnance.Ordonnance;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 
@@ -84,7 +88,7 @@ public class Consultation {
 		this.ordonnance = Ordonnance;
 	}
 
-	public boolean createOrdonnance() {
+	public boolean createOrdonnance()throws SQLIntegrityConstraintViolationException {
 		this.ordonnance = new Ordonnance(this);
 		boolean created = this.ordonnance.addOrdonnance();
 		this.setOrdonnance(ordonnance);
@@ -131,6 +135,51 @@ public class Consultation {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String getFullNameById(String tableName, String idColumnName, String id) {
+		String fullName = "";
+		String sql = "SELECT Prenom, Nom FROM " + tableName + " WHERE " + idColumnName + " = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				fullName = rs.getString("Prenom") + " " + rs.getString("Nom");
+			}
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return fullName;
+	}
+
+	public File createOrdonnanceFile() throws IOException {
+		if (ordonnance == null) {
+			return null;
+		}
+
+		String patientName = getFullNameById("patient", "IdPatient", patient);
+		String medecinName = getFullNameById("medecin", "Id", medecin);
+
+		File tempFile = File.createTempFile("ordonnance_" + idConsult + "_", ".txt");
+		tempFile.deleteOnExit();
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+			writer.write("----- Ordonnance -----\n");
+			writer.write("Consultation ID: " + idConsult + "\n");
+			writer.write("Patient: " + patientName + "\n");
+			writer.write("Medecin: " + medecinName + "\n");
+			writer.write("Date: " + date + "\n");
+			writer.write("Medicaments: " + ordonnance.getMedicaments() + "\n");
+			writer.write("Propositions Soins: " + ordonnance.getPropositionsSoins() + "\n");
+			writer.write("Appareil Medical: " + ordonnance.getAppareilMedical() + "\n");
+			writer.write("Device Status: " + ordonnance.getDeviceStatus() + "\n");
+			writer.write("Date Creation: " + ordonnance.getDateCreation() + "\n");
+			writer.write("----------------------\n");
+		}
+
+		return tempFile;
 	}
 }
 

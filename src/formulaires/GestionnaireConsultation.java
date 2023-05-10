@@ -208,32 +208,6 @@ public class GestionnaireConsultation {
 	    return str.toString();
 	}
 	
-	/**
-	This method gets Name of a patient using their ID. It returns a String
-	containing the patient's last name and first name
-	@param idPatient the ID of the patient to search for
-	@return a formatted String with the patient's details, including their antecedents
-	*/
-	public String NamePatient(String idPatient) {
-	    StringBuilder str = new StringBuilder();
-	    String sql = "SELECT Nom, Prenom FROM patient WHERE IdPatient = ?";
-	    try {
-	        //get the id of the patient
-	        PreparedStatement pstmt = connection.prepareStatement(sql);
-	        pstmt.setString(1, idPatient);
-	        ResultSet rs = pstmt.executeQuery();
-	        if (rs.next()) {
-	            String nom = rs.getString("Nom");
-	            String prenom = rs.getString("Prenom");
-	            str.append(nom).append(" ").append(prenom).append("\n");
-	        }
-	        pstmt.close();
-	        rs.close();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return str.toString();
-	}
-	
+
 }
 

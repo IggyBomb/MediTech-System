@@ -9,7 +9,10 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import Acteurs.Patient;
+import Consultation.Consultation;
 import formulaires.GestionnaireAdministratif;
+import formulaires.GestionnaireConsultation;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -20,14 +23,18 @@ import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JComboBox;
 
 public class admin {
 
-	private GestionnaireAdministratif gestionnaire =  new GestionnaireAdministratif("root", "T1t4n1c0");
+	private GestionnaireAdministratif Admin =  new GestionnaireAdministratif("root", "T1t4n1c0");
+	private GestionnaireConsultation gestionnaireConsult = new GestionnaireConsultation("root", "T1t4n1c0");
 	private JFrame frame;
 	private JTextField IDsearchTextField;
 	private JTextField textFieldName;
-	private JTable tableResults;
+	private JTable tableResultsPatient;
+	private JTable tableResultsConsult;
+	private JTextField textField_idPatientConsult;
 
 	/**
 	 * Launch the application.
@@ -58,7 +65,7 @@ public class admin {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 703, 377);
+		frame.setBounds(100, 100, 703, 676);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
@@ -86,7 +93,7 @@ public class admin {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Patient patient = gestionnaire.findByID(IDsearchTextField.getText());
+				Patient patient = Admin.findByID(IDsearchTextField.getText());
 				if (patient == null) {
 					JOptionPane.showMessageDialog(frame, "ID not found.", "Search results", JOptionPane.INFORMATION_MESSAGE);
 				}else {
@@ -100,7 +107,7 @@ public class admin {
 							patient.getDateNaissance()
 					};
 					tableModel.addRow(rowData);
-					tableResults.setModel(tableModel); // Set the table model for tableResults
+					tableResultsPatient.setModel(tableModel); // Set the table model for tableResults
 				}
 			}
 		});
@@ -136,13 +143,13 @@ public class admin {
 		scrollPane.setBounds(248, 46, 401, 153);
 		frame.getContentPane().add(scrollPane);
 
-		tableResults = new JTable();
-		scrollPane.setViewportView(tableResults);
+		tableResultsPatient = new JTable();
+		scrollPane.setViewportView(tableResultsPatient);
 
 		JButton btnSearchByName = new JButton("Search");
 		btnSearchByName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<Patient> patients = gestionnaire.searchPatientsByName(textFieldName.getText());
+				List<Patient> patients = Admin.searchPatientsByName(textFieldName.getText());
 				if (patients.isEmpty()) {
 					JOptionPane.showMessageDialog(frame, "Name not found.", "Search results", JOptionPane.INFORMATION_MESSAGE);
 				}else {
@@ -158,7 +165,7 @@ public class admin {
 						};
 						tableModel.addRow(rowData);
 					}
-					tableResults.setModel(tableModel); // Set the table model for tableResults
+					tableResultsPatient.setModel(tableModel); // Set the table model for tableResults
 
 				}
 			}
@@ -182,7 +189,7 @@ public class admin {
 
 			}
 		});
-		btnInsert.setBounds(65, 285, 120, 33);
+		btnInsert.setBounds(68, 240, 120, 33);
 		frame.getContentPane().add(btnInsert);
 
 		JButton btnDeletePatient = new JButton("Delete patient");
@@ -191,7 +198,7 @@ public class admin {
 				DeletePatient.main(null);
 			}
 		});
-		btnDeletePatient.setBounds(288, 285, 122, 33);
+		btnDeletePatient.setBounds(291, 240, 122, 33);
 		frame.getContentPane().add(btnDeletePatient);
 
 		JButton btnUpdatePatient = new JButton("Update patient");
@@ -200,18 +207,139 @@ public class admin {
 				UpdatePatient.main(null);
 			}
 		});
-		btnUpdatePatient.setBounds(513, 285, 130, 33);
+		btnUpdatePatient.setBounds(516, 240, 130, 33);
 		frame.getContentPane().add(btnUpdatePatient);
 
 		JButton btnRefreshTable = new JButton("Refresh");
 		btnRefreshTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DefaultTableModel emptyTableModel = new DefaultTableModel();
-				tableResults.setModel(emptyTableModel); // Set the empty table model for tableResults
+				tableResultsPatient.setModel(emptyTableModel); // Set the empty table model for tableResults
 			}
 		});
 		btnRefreshTable.setBounds(564, 209, 85, 21);
 		frame.getContentPane().add(btnRefreshTable);
+		
+		JScrollPane scrollPane_Consult = new JScrollPane();
+		scrollPane_Consult.setBounds(248, 332, 401, 180);
+		frame.getContentPane().add(scrollPane_Consult);
+		
+		JLabel lblTitle2 = new JLabel("Gestionnaire Consultation");
+		lblTitle2.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTitle2.setFont(new Font("Verdana Pro", Font.BOLD, 14));
+		lblTitle2.setBounds(149, 287, 271, 35);
+		frame.getContentPane().add(lblTitle2);
+		
+		JPanel panel_SearchConsult = new JPanel();
+		panel_SearchConsult.setBorder(new TitledBorder(null, "Search Consultation", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_SearchConsult.setBounds(10, 332, 228, 79);
+		frame.getContentPane().add(panel_SearchConsult);
+		panel_SearchConsult.setLayout(null);
+		
+		JLabel lblSearchConsult = new JLabel("Id Consultation");
+		lblSearchConsult.setBounds(10, 24, 59, 13);
+		panel_SearchConsult.add(lblSearchConsult);
+		
+		JTextField textField_searchConsult = new JTextField();
+		textField_searchConsult.setBounds(79, 21, 139, 19);
+		panel_SearchConsult.add(textField_searchConsult);
+		textField_searchConsult.setColumns(10);
+		
+		tableResultsConsult = new JTable();
+		scrollPane_Consult.setViewportView(tableResultsConsult);
+		
+		JButton btnSearch_Consult = new JButton("Search");
+		btnSearch_Consult.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Consultation consultation = gestionnaireConsult.getConsultationByID(textField_searchConsult.getText());
+				if (consultation == null) {
+					JOptionPane.showMessageDialog(frame, "ID not found.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
+				}else {
+					String[] columnNames = {"IdConsult", "PatientID", "MedecinID", "DetailsCliniques", "Date"};
+					DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+					Object[] rowData = {
+							consultation.getIdConsult(),
+							consultation.getPatient(), 
+							consultation.getMedecin(), 
+							consultation.getDetailsCliniques(),
+							consultation.getDate()
+					};
+					tableModel.addRow(rowData);
+					tableResultsConsult.setModel(tableModel); // Set the table model for tableResult
+				}
+			}
+		});
+		btnSearch_Consult.setBounds(76, 50, 76, 19);
+		panel_SearchConsult.add(btnSearch_Consult);
+		
+		JButton btnRefreshTable_Consult = new JButton("Refresh");
+		btnRefreshTable_Consult.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultTableModel emptyTableModel = new DefaultTableModel();
+				tableResultsConsult.setModel(emptyTableModel); // Set the empty table model for tableResults
+			}
+		});
+		btnRefreshTable_Consult.setBounds(564, 522, 85, 21);
+		frame.getContentPane().add(btnRefreshTable_Consult);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Search Patient Consultations", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(10, 426, 228, 86);
+		frame.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel lblNewLabel_PatientConsult = new JLabel("ID Patient");
+		lblNewLabel_PatientConsult.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNewLabel_PatientConsult.setBounds(10, 30, 48, 13);
+		panel_1.add(lblNewLabel_PatientConsult);
+		
+		textField_idPatientConsult = new JTextField();
+		textField_idPatientConsult.setBounds(83, 27, 135, 19);
+		panel_1.add(textField_idPatientConsult);
+		textField_idPatientConsult.setColumns(10);
+		
+		JButton btnSearch_Consult_byName = new JButton("Search");
+		btnSearch_Consult_byName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<Consultation> consultations = gestionnaireConsult.listConsultationPatient(textField_idPatientConsult.getText());
+				if (consultations.isEmpty()) {
+					JOptionPane.showMessageDialog(frame, "No consultations with this patient.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
+				}else {
+					String[] columnNames = {"IdConsult", "PatientID", "MedecinID", "DetailsCliniques", "Date"};
+					DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+					for (Consultation consultation : consultations) {
+						Object[] rowData = {
+								consultation.getIdConsult(),
+								consultation.getPatient(), 
+								consultation.getMedecin(), 
+								consultation.getDetailsCliniques(),
+								consultation.getDate()
+						};
+						tableModel.addRow(rowData);
+					}
+					tableResultsConsult.setModel(tableModel); // Set the table model for tableResults
+
+				}
+				
+			}
+		});
+		btnSearch_Consult_byName.setBounds(83, 56, 76, 19);
+		panel_1.add(btnSearch_Consult_byName);
+		
+		JButton btnNewConsultation = new JButton("New Consultation");
+		btnNewConsultation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InsertConsultationAdmin.main(null);
+			}
+		});
+		btnNewConsultation.setBounds(68, 556, 120, 33);
+		frame.getContentPane().add(btnNewConsultation);
+		
+		JButton btnDeleteConsult = new JButton("Delete Consultation");
+		btnDeleteConsult.setBounds(291, 556, 122, 33);
+		frame.getContentPane().add(btnDeleteConsult);
+		
+
 
 
 	}

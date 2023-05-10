@@ -216,7 +216,7 @@ public class InsertConsultation extends JFrame {
 		contentPane.add(lblID_consult);
 
 		textField_idConsultation = new JTextField();
-		textField_idConsultation.setBounds(195, 354, 101, 19);
+		textField_idConsultation.setBounds(191, 354, 101, 19);
 		contentPane.add(textField_idConsultation);
 		textField_idConsultation.setColumns(10);
 
@@ -256,7 +256,27 @@ public class InsertConsultation extends JFrame {
 				}
 			}
 			});
-		btnCreateNew.setBounds(128, 464, 85, 21);
+		btnCreateNew.setBounds(107, 430, 85, 21);
 		contentPane.add(btnCreateNew);
+		
+		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField_idConsultation.setText("");
+				textField_details.setText("");
+				
+			}
+		});
+		btnClear.setBounds(309, 430, 85, 21);
+		contentPane.add(btnClear);
+		
+		JButton btnClose = new JButton("Close");
+		btnClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnClose.setBounds(207, 430, 85, 21);
+		contentPane.add(btnClose);
 		}
 	}
