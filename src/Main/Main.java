@@ -14,9 +14,6 @@ public class Main {
 		GestionnaireConsultation gestionnaire = new GestionnaireConsultation("root", "T1t4n1c0");
 		Consultation cons = gestionnaire.getConsultationByID("test");
 		System.out.println(cons.toString());
-		
-		
-
 	}
 
 }

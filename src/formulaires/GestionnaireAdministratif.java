@@ -219,6 +219,57 @@ public class GestionnaireAdministratif {
 	}
 	
 	
-
-
+	//For the login page, find if there is an account with the given parameters and if the user is a doctor
+	public boolean accessMedecin(String user, String password) throws SQLException {
+	    String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'medecin'";
+	    try {
+	        PreparedStatement pstmt = connection.prepareStatement(query);
+	        pstmt.setString(1, user);
+	        pstmt.setString(2, password);
+	        ResultSet rs = pstmt.executeQuery();
+	        if(rs.next()) {
+	            return true; // Record found with matching username and password.
+	        } else {
+	            return false; // No record found with matching username and password.
+	        }
+	    } catch (SQLException ex) {
+	        throw new SQLException(ex);
+	    }
+	}
+	
+	//For the login page, find if there is an account with the given parameters and if the user is a admin
+	public boolean accessAdmin(String user, String password) throws SQLException {
+	    String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'admin'";
+	    try {
+	        PreparedStatement pstmt = connection.prepareStatement(query);
+	        pstmt.setString(1, user);
+	        pstmt.setString(2, password);
+	        ResultSet rs = pstmt.executeQuery();
+	        if(rs.next()) {
+	            return true; // Record found with matching username and password.
+	        } else {
+	            return false; // No record found with matching username and password.
+	        }
+	    } catch (SQLException ex) {
+	        throw new SQLException(ex);
+	    }
+	}
+	
+	//For the login page, find if there is an account with the given parameters and if the user is a technicien
+	public boolean accessTechnicien(String user, String password) throws SQLException {
+	    String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'technicien'";
+	    try {
+	        PreparedStatement pstmt = connection.prepareStatement(query);
+	        pstmt.setString(1, user);
+	        pstmt.setString(2, password);
+	        ResultSet rs = pstmt.executeQuery();
+	        if(rs.next()) {
+	            return true; // Record found with matching username and password.
+	        } else {
+	            return false; // No record found with matching username and password.
+	        }
+	    } catch (SQLException ex) {
+	        throw new SQLException(ex);
+	    }
+	}
 }

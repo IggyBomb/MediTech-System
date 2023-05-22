@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterAll;
@@ -70,14 +71,14 @@ class ConsultationTest {
 	}
 
 	@Test
-	public void testCreateOrdonnance() {
+	public void testCreateOrdonnance() throws SQLIntegrityConstraintViolationException {
 		assertTrue(consultation.createOrdonnance());
 		assertNotNull(consultation.getOrdonnance());
 		assertEquals("Test", consultation.getOrdonnance().getIdOrdonnance());
 	}
 	
     @Test
-    public void testRemoveOrdonnance() {
+    public void testRemoveOrdonnance() throws SQLIntegrityConstraintViolationException {
         assertTrue(consultation.createOrdonnance());
         assertNotNull(consultation.getOrdonnance());
         // remove the ordonnance
@@ -86,7 +87,7 @@ class ConsultationTest {
     }
     
 	@Test
-	void testFindOrdonnance() {
+	void testFindOrdonnance() throws SQLIntegrityConstraintViolationException {
 		Consultation cons2 = new Consultation("Test2", "1_pat", "1_med", "details_test", LocalDateTime.of(2023, 1, 1, 0, 0));
 		gestionnaire.addConsultation(cons2);
 		boolean isOK = cons2.createOrdonnance();

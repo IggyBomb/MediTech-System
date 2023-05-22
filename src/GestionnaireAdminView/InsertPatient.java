@@ -1,4 +1,4 @@
-package swingAdmin;
+package GestionnaireAdminView;
 
 import java.awt.EventQueue;
 import com.toedter.calendar.JDateChooser;

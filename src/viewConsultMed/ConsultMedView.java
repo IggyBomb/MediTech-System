@@ -1,4 +1,4 @@
-package ConsultationSwing;
+package viewConsultMed;
 
 import java.awt.EventQueue;
 
@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import Acteurs.Patient;
 import Consultation.Consultation;
+import controllerConsultatonsMedecin.controllerSearchConsultClinical;
 import formulaires.GestionnaireAdministratif;
 import formulaires.GestionnaireConsultation;
 import javax.swing.JLabel;
@@ -28,7 +29,7 @@ import java.util.Scanner;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
-public class SearchByConsultID extends JFrame {
+public class ConsultMedView extends JFrame {
 
 
 	private GestionnaireConsultation gestionnaire = new GestionnaireConsultation("root", "T1t4n1c0");
@@ -41,6 +42,8 @@ public class SearchByConsultID extends JFrame {
 	private JTextField textField_Patient_Name;
 	private Patient patient;
 	public static Consultation consultation;
+	private controllerSearchConsultClinical controller;
+	private String idConsult;
 	/**
 	 * Launch the application.
 	 */
@@ -48,7 +51,7 @@ public class SearchByConsultID extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SearchByConsultID frame = new SearchByConsultID(idConsult);
+					ConsultMedView frame = new ConsultMedView(idConsult);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,12 +63,16 @@ public class SearchByConsultID extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SearchByConsultID(String idConsult) {
+	public ConsultMedView(String idConsult) {
+        // Initialize the controller
+        controller = new controllerSearchConsultClinical(this);
+        this.idConsult = idConsult;
+        controller.consultationRetrive();
+        controller.retrivePatient();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 434);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		consultation = gestionnaire.getConsultationByID(idConsult);
 		if(consultation == null) {
 			JOptionPane.showMessageDialog(contentPane, "ID not found.", "Search results", JOptionPane.INFORMATION_MESSAGE);
 			dispose();
@@ -132,15 +139,12 @@ public class SearchByConsultID extends JFrame {
 		textField_PhysicianName.setText(consultation.getMedecin());
 		textField_date.setText(consultation.getDate().toString());
 
-		patient = Admin.findByID(consultation.getPatient());
 		String nomPatient = patient.getNom() + " " + patient.getPrenom();
 		textField_Patient_Name = new JTextField();
 		textField_Patient_Name.setBounds(158, 183, 117, 19);
 		contentPane.add(textField_Patient_Name);
 		textField_Patient_Name.setColumns(10);
 		textField_Patient_Name.setText(nomPatient);
-
-
 
 		JButton btnClose = new JButton("Close");
 		btnClose.addActionListener(new ActionListener() {
@@ -155,7 +159,6 @@ public class SearchByConsultID extends JFrame {
 		btnFindPatientDetails.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getDetailsPatient.main(consultation.getPatient());
-
 			}
 		});
 		btnFindPatientDetails.setBounds(285, 182, 117, 21);
@@ -229,4 +232,79 @@ public class SearchByConsultID extends JFrame {
 		contentPane.add(btnPrint);
 
 	}
+
+	public JPanel getContentPane() {
+		return contentPane;
+	}
+
+	public void setContentPane(JPanel contentPane) {
+		this.contentPane = contentPane;
+	}
+
+	public JTextField getTextField_Id() {
+		return textField_Id;
+	}
+
+	public void setTextField_Id(JTextField textField_Id) {
+		this.textField_Id = textField_Id;
+	}
+
+	public JTextField getTextField_details() {
+		return textField_details;
+	}
+
+	public void setTextField_details(JTextField textField_details) {
+		this.textField_details = textField_details;
+	}
+
+	public JTextField getTextField_PhysicianName() {
+		return textField_PhysicianName;
+	}
+
+	public void setTextField_PhysicianName(JTextField textField_PhysicianName) {
+		this.textField_PhysicianName = textField_PhysicianName;
+	}
+
+	public JTextField getTextField_date() {
+		return textField_date;
+	}
+
+	public void setTextField_date(JTextField textField_date) {
+		this.textField_date = textField_date;
+	}
+
+	public JTextField getTextField_Patient_Name() {
+		return textField_Patient_Name;
+	}
+
+	public void setTextField_Patient_Name(JTextField textField_Patient_Name) {
+		this.textField_Patient_Name = textField_Patient_Name;
+	}
+
+	public Patient getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+
+	public static Consultation getConsultation() {
+		return consultation;
+	}
+
+	public static void setConsultation(Consultation consultation) {
+		ConsultMedView.consultation = consultation;
+	}
+
+	public String getIdConsult() {
+		return idConsult;
+	}
+
+	public void setIdConsult(String idConsult) {
+		this.idConsult = idConsult;
+	}
+	
+	
+	
 }
