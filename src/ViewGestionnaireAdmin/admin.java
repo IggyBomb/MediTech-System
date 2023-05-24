@@ -1,4 +1,4 @@
-package swingAdmin;
+package ViewGestionnaireAdmin;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -303,7 +303,7 @@ public class admin {
 			public void actionPerformed(ActionEvent e) {
 				List<Consultation> consultations = gestionnaireConsult.listConsultationPatient(textField_idPatientConsult.getText());
 				if (consultations.isEmpty()) {
-					JOptionPane.showMessageDialog(frame, "No consultations with this patient.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "No consultations for this patient.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}else {
 					String[] columnNames = {"IdConsult", "PatientID", "MedecinID", "DetailsCliniques", "Date"};
 					DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
@@ -318,9 +318,7 @@ public class admin {
 						tableModel.addRow(rowData);
 					}
 					tableResultsConsult.setModel(tableModel); // Set the table model for tableResults
-
 				}
-				
 			}
 		});
 		btnSearch_Consult_byName.setBounds(83, 56, 76, 19);
@@ -336,6 +334,11 @@ public class admin {
 		frame.getContentPane().add(btnNewConsultation);
 		
 		JButton btnDeleteConsult = new JButton("Delete Consultation");
+		btnDeleteConsult.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DeleteConsultation.main(null);
+			}
+		});
 		btnDeleteConsult.setBounds(291, 556, 122, 33);
 		frame.getContentPane().add(btnDeleteConsult);
 		

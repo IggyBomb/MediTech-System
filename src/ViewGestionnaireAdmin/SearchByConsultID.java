@@ -1,4 +1,4 @@
-package swingAdmin;
+package ViewGestionnaireAdmin;
 
 import java.awt.EventQueue;
 

@@ -11,5 +11,10 @@ public class Medecin extends Employee{
     public String toString() {
         return this.getNom() + " " + this.getPrenom();
     }
+    
+    @Override
+    public String getRole() {
+		return "medecin";
+	}
 
 }

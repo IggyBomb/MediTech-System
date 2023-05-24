@@ -1,9 +1,9 @@
 package Acteurs;
 
-public class AgentAdministration extends Employee {
-
-	public AgentAdministration(String id, String nom, String prenom, String adresse, double Salaire) {
+public class Technicien extends Employee {
+	public Technicien(String id, String nom, String prenom, String adresse, double Salaire) {
 		super(id, nom, prenom, adresse, Salaire);
+		// TODO Auto-generated constructor stub
 	}
 	
     @Override
@@ -13,7 +13,7 @@ public class AgentAdministration extends Employee {
     
     @Override
     public String getRole() {
-		return "admin";
+		return "technicien";
 	}
 
 

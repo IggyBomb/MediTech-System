@@ -49,6 +49,10 @@ public abstract class Employee {
 		Salaire = salaire;
 	}
 	
+	public String getRole() {
+		return "";
+	}
+	
 	
 
 }

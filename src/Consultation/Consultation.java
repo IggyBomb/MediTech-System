@@ -167,10 +167,8 @@ public class Consultation {
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
 			writer.write("----- Ordonnance -----\n");
-			writer.write("Consultation ID: " + idConsult + "\n");
 			writer.write("Patient: " + patientName + "\n");
 			writer.write("Medecin: " + medecinName + "\n");
-			writer.write("Date: " + date + "\n");
 			writer.write("Medicaments: " + ordonnance.getMedicaments() + "\n");
 			writer.write("Propositions Soins: " + ordonnance.getPropositionsSoins() + "\n");
 			writer.write("Appareil Medical: " + ordonnance.getAppareilMedical() + "\n");
