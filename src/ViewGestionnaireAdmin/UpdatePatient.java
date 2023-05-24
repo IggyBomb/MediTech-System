@@ -1,4 +1,4 @@
-package GestionnaireAdminView;
+package ViewGestionnaireAdmin;
 
 import java.awt.EventQueue;
 

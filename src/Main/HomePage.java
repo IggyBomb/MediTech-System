@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import GestionnaireAdminView.admin;
+import ViewGestionnaireAdmin.admin;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 public class HomePage extends JFrame {
 
 	private JPanel contentPane;
+	private JButton btnSuperAdmin;
 
 	/**
 	 * Launch the application.
@@ -84,5 +85,9 @@ public class HomePage extends JFrame {
 		});
 		rdbtntechnicien.setBounds(159, 168, 103, 21);
 		contentPane.add(rdbtntechnicien);
+		
+		btnSuperAdmin = new JButton("Super Admin");
+		btnSuperAdmin.setBounds(159, 211, 103, 21);
+		contentPane.add(btnSuperAdmin);
 	}
 }

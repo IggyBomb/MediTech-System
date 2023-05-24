@@ -1,4 +1,4 @@
-package GestionnaireAdminView;
+package ViewGestionnaireAdmin;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -334,6 +334,11 @@ public class admin {
 		frame.getContentPane().add(btnNewConsultation);
 		
 		JButton btnDeleteConsult = new JButton("Delete Consultation");
+		btnDeleteConsult.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DeleteConsultation.main(null);
+			}
+		});
 		btnDeleteConsult.setBounds(291, 556, 122, 33);
 		frame.getContentPane().add(btnDeleteConsult);
 		

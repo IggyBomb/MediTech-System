@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import GestionnaireAdminView.admin;
 import Main.LoginView;
+import ViewGestionnaireAdmin.admin;
 import formulaires.GestionnaireAdministratif;
 import viewConsultMed.GestionnaireViewMed;
 
