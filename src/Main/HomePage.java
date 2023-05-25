@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import ViewGestionnaireAdmin.admin;
+import ViewSuperAdmin.ViewSuperAdmin;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -42,7 +43,7 @@ public class HomePage extends JFrame {
 	 * Create the frame.
 	 */
 	public HomePage() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -59,7 +60,7 @@ public class HomePage extends JFrame {
 		JButton rdbtnAdmin = new JButton("Admin");
 		rdbtnAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginView login = new LoginView(HomePage.this, "admin");
+				ViewLogin login = new ViewLogin(HomePage.this, "admin");
                 login.setVisible(true); 	
 			}
 		});
@@ -69,7 +70,7 @@ public class HomePage extends JFrame {
 		JButton rdbtnConsult = new JButton("Medecin");
 		rdbtnConsult.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginView login = new LoginView(HomePage.this, "medecin");
+				ViewLogin login = new ViewLogin(HomePage.this, "medecin");
                 login.setVisible(true); 	
 			}
 		});
@@ -79,7 +80,7 @@ public class HomePage extends JFrame {
 		JButton rdbtntechnicien = new JButton("Technicien");
 		rdbtntechnicien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginView login = new LoginView(HomePage.this, "technicien");
+				ViewLogin login = new ViewLogin(HomePage.this, "technicien");
                 login.setVisible(true); 	
 			}
 		});
@@ -87,6 +88,11 @@ public class HomePage extends JFrame {
 		contentPane.add(rdbtntechnicien);
 		
 		btnSuperAdmin = new JButton("Super Admin");
+		btnSuperAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ViewSuperAdmin.main(null);
+			}
+		});
 		btnSuperAdmin.setBounds(159, 211, 103, 21);
 		contentPane.add(btnSuperAdmin);
 	}

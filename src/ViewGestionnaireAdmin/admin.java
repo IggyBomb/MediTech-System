@@ -9,9 +9,9 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import Acteurs.Patient;
-import Consultation.Consultation;
-import formulaires.GestionnaireAdministratif;
-import formulaires.GestionnaireConsultation;
+import Models.Consultation;
+import Models.GestionnaireAdministratif;
+import Models.GestionnaireConsultation;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;

@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
 import Acteurs.Patient;
-import formulaires.GestionnaireAdministratif;
+import Models.GestionnaireAdministratif;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
