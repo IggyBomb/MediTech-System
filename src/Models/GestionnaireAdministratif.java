@@ -275,7 +275,7 @@ public class GestionnaireAdministratif {
 	
 	//For the login page, find if there is an account with the given parameters and if the user is a technicien
 		public boolean accessSuperAdmin(String user, String password) throws SQLException {
-		    String query = "SELECT * FROM Login WHERE username = ? and password = ?";
+		    String query = "SELECT * FROM Login WHERE username = ? and password = ? ANDprofession = 'superAdmin'";
 		    try {
 		        PreparedStatement pstmt = connection.prepareStatement(query);
 		        pstmt.setString(1, user);
