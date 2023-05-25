@@ -1,0 +1,4 @@
+ID,username,password,profession
+M11223,medecinUser,111,medecin
+S67890,superAdminUser,111,superAdmin
+T12345,technicienUser,111,technicien
