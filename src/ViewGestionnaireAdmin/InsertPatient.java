@@ -3,7 +3,8 @@ package ViewGestionnaireAdmin;
 import java.awt.EventQueue;
 import com.toedter.calendar.JDateChooser;
 import Acteurs.Patient;
-import formulaires.GestionnaireAdministratif;
+import Models.GestionnaireAdministratif;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;

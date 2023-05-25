@@ -6,7 +6,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import Acteurs.Patient;
-import Consultation.Consultation;
+import Models.Consultation;
 
 public class Dossier {
 	private LocalDateTime dateCreation;

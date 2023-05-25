@@ -7,9 +7,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Acteurs.Patient;
-import Consultation.Consultation;
-import formulaires.GestionnaireAdministratif;
-import formulaires.GestionnaireConsultation;
+import Models.Consultation;
+import Models.GestionnaireAdministratif;
+import Models.GestionnaireConsultation;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 

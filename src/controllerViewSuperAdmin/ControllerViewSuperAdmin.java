@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Acteurs.Employee;
+import Models.GestionnaireSuperAdmin;
 import ViewSuperAdmin.ViewSuperAdmin;
-import formulaires.GestionnaireSuperAdmin;
 
 public class ControllerViewSuperAdmin {
 	private ViewSuperAdmin view;

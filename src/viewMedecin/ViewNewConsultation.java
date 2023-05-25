@@ -1,4 +1,4 @@
-package ViewGestionnaireAdmin;
+package viewMedecin;
 
 import java.awt.EventQueue;
 
@@ -11,6 +11,7 @@ import Acteurs.Patient;
 import Models.Consultation;
 import Models.GestionnaireConsultation;
 import Models.SingleConnection;
+import controllerViewMedecin.ControllerNewConsultation;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -39,12 +40,10 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class InsertConsultationAdmin extends JFrame {
+public class ViewNewConsultation extends JFrame {
 
-	private GestionnaireConsultation gestionnaire = new GestionnaireConsultation("root", "T1t4n1c0");
 	private JPanel contentPane;
 	private PreparedStatement pstmt;
-	private Connection connection = SingleConnection.getInstance("jdbc:mysql://127.0.0.1:3306/nfa019project", "root", "T1t4n1c0");
 	private ResultSet rs;
 	private JComboBox comboBox_physician;
 	private JLabel lblPatient;
@@ -53,6 +52,7 @@ public class InsertConsultationAdmin extends JFrame {
 	private JTextField textField_details;
 	private String selectedPatientId;
 	private String selectedDoctorId;
+	private ControllerNewConsultation controller;
 
 
 	/**
@@ -62,7 +62,8 @@ public class InsertConsultationAdmin extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InsertConsultationAdmin frame = new InsertConsultationAdmin();
+					
+					ViewNewConsultation frame = new ViewNewConsultation();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -71,63 +72,31 @@ public class InsertConsultationAdmin extends JFrame {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public void fillComboPhysician() throws SQLException {
-		try {
-			String sql = "SELECT * FROM medecin";
-			pstmt = connection.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				String id = rs.getString("Id");
-				String nom = rs.getString("Nom");
-				String prenom = rs.getString("Prenom");
-				String adresse = rs.getString("Adresse");
-				double salaire = rs.getDouble("Salaire");
-				Medecin medecin = new Medecin(id, nom, prenom, adresse, salaire);
-				comboBox_physician.addItem(medecin);
-			}
-		} catch (SQLException e) {
-			Logger.getLogger(InsertConsultationAdmin.class.getName());
-		}/* finally {
-	        pstmt.close();
-	        rs.close();
-	    }
-		 */
+		 try {
+	            controller.fillComboPhysician(comboBox_physician);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
 	}
 
 	@SuppressWarnings("unchecked")
 	public void fillComboPatient() throws SQLException {
-		try {
-			String sql = "SELECT * FROM nfa019project.patient";
-			pstmt = connection.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				String idPatient = rs.getString("IdPatient");
-				String nom = rs.getString("Nom");
-				String prenom = rs.getString("Prenom");
-				String adresse = rs.getString("Adresse");
-				LocalDateTime dateNaissance = rs.getTimestamp("DateNaissance").toLocalDateTime();
-				Patient patient = new Patient(nom, prenom, adresse, dateNaissance, idPatient);
-				comboBox_Patient.addItem(patient);
-				System.out.println(nom +" "+prenom);
-			}
-		} catch (SQLException e) {
-			Logger.getLogger(InsertConsultationAdmin.class.getName());
-		} finally {
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-		}
+		 try {
+	            controller.fillComboPatient(comboBox_Patient);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public InsertConsultationAdmin() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ViewNewConsultation() {
+		controller = new ControllerNewConsultation(this);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 530);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -248,7 +217,7 @@ public class InsertConsultationAdmin extends JFrame {
 				// Combine the date and time to create a LocalDateTime object
 				LocalDateTime ConsultTime = LocalDateTime.of(localDate, localTime);
 				String details = textField_details.getText();
-				Boolean insert = gestionnaire.addConsultation(new Consultation(textField_idConsultation.getText(), selectedPatientId, selectedDoctorId, details, ConsultTime));
+				boolean insert = controller.createConsultation(textField_idConsultation.getText(), selectedPatientId, selectedDoctorId, details, ConsultTime);
 				if(insert) {
 					JOptionPane.showMessageDialog(contentPane, "Visit confirmed", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}else {
