@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,14 @@ public class GestionnaireAdministratif {
 	}
 
 
-	public Dossier findDossier(String sql, String id, Patient p1) throws SQLException {
+	public Dossier findDossier(String id) throws SQLException {
+		String sql = "SELECT * FROM dossier WHERE IdDossier = ?";
 		Dossier dossier = null;
 		PreparedStatement pstmt = connection.prepareStatement(sql);
 		pstmt.setString(1, id);
 		ResultSet resultSet = pstmt.executeQuery();
 		if (resultSet.next()) {
-			dossier = new Dossier(p1);
+			dossier = new Dossier(findByID(id));
 			dossier.setIdDossier(resultSet.getString("IdDossier"));
 			dossier.setDateCreation(resultSet.getTimestamp("DateCreation").toLocalDateTime());
 			dossier.setAntecedents(resultSet.getString("Antecedents"));
@@ -52,7 +54,7 @@ public class GestionnaireAdministratif {
 			ResultSet resultSet = pstmt.executeQuery();
 			if (resultSet.next()) {
 				patient = new Patient(resultSet.getString("Nom"),resultSet.getString("Prenom"), resultSet.getString("Adresse"), resultSet.getTimestamp("DateNaissance").toLocalDateTime(), resultSet.getString("IdPatient"));
-				Dossier dossier = findDossier(dossierSql, id, patient);
+				Dossier dossier = findDossier(dossierSql);
 				if (dossier != null) {
 					patient.setDossier(dossier);
 				}
@@ -106,7 +108,7 @@ public class GestionnaireAdministratif {
 			pstmt.setString(5, patient.getAdresse());
 			pstmt.executeUpdate();
 			pstmt.close();
-			// Insert dossier in the batabase
+			// Insert dossier in the database
 			Dossier dossier = new Dossier(patient);
 			patient.setDossier(dossier);
 			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents, PatientID) VALUES (?, ?, ?, ?)";
@@ -180,6 +182,11 @@ public class GestionnaireAdministratif {
 	    }
 	}
 	
+	/**
+	This method updates a dossier.
+	@param the dossier of the patient
+	@return a boolean with the result of the operation
+	*/
 	public boolean updatePatient(Patient patient) throws SQLException {
 	    String updatePatientSql = "UPDATE patient SET Nom=?, Prenom=?, DateNaissance=?, Adresse=? WHERE IdPatient=?";
 	    PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
@@ -196,6 +203,26 @@ public class GestionnaireAdministratif {
 	    return false;
 	}
 	
+	/**
+	This method creates a new dossier.
+	@param the dossier of the patient
+	@return a boolean with the result of the operation
+	*/
+	public boolean createDossier(String id) throws SQLException {
+		String createDossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
+	    PreparedStatement updatePatientStmt = connection.prepareStatement(createDossierSql); 
+	    updatePatientStmt.setString(1, id);
+	    updatePatientStmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+	    updatePatientStmt.setNull(3, Types.VARCHAR); // Or another SQL type if 'Antecedents' is not a VARCHAR;
+	    int rowsUpdated = updatePatientStmt.executeUpdate();
+	    updatePatientStmt.close();
+	    if (rowsUpdated == 1) {
+	        return true;
+	    }
+	    return false;
+	}
+	
+	
 	
 	/**
 	This method updates the dossier of a patient the details of a patient using their ID. 
@@ -203,13 +230,12 @@ public class GestionnaireAdministratif {
 	@return a boolean with the result of the operation
 	*/
 	public boolean updateDossier(Dossier dossier) throws SQLException {
-	    String updatePatientSql = "UPDATE dossier SET IdDossier=?, DateCreation=?, Antecedents=?, PatientID=? WHERE IdDossier=?";
+	    String updatePatientSql = "UPDATE dossier SET IdDossier=?, DateCreation=?, Antecedents=? WHERE IdDossier=?";
 	    PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
 	    updatePatientStmt.setString(1, dossier.getIdDossier());
 	    updatePatientStmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
 	    updatePatientStmt.setString(3, dossier.getAntecedents());
-	    updatePatientStmt.setString(4, dossier.getPatient().getIdPatient());
-	    updatePatientStmt.setString(5, dossier.getIdDossier());
+	    updatePatientStmt.setString(4, dossier.getIdDossier());
 	    int rowsUpdated = updatePatientStmt.executeUpdate();
 	    updatePatientStmt.close();
 	    if (rowsUpdated == 1) {

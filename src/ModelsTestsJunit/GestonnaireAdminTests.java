@@ -176,7 +176,7 @@ class GestonnaireAdminTests {
 	    boolean updateSuccessful = gestionnaire.updateDossier(dossier);
 	    assertTrue(updateSuccessful);
 	    // Retrieve the updated dossier from the database
-	    Dossier updatedDossier = gestionnaire.findDossier("SELECT * FROM dossier WHERE IdDossier  = ?", dossier.getIdDossier(), patient);
+	    Dossier updatedDossier = gestionnaire.findDossier("SELECT * FROM dossier WHERE IdDossier  = ?");
 	    assertNotNull(updatedDossier);
 	    assertEquals(dossier.getIdDossier(), updatedDossier.getIdDossier());
 	    assertEquals(dossier.getAntecedents(), updatedDossier.getAntecedents());

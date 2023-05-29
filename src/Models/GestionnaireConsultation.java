@@ -169,12 +169,12 @@ public class GestionnaireConsultation {
 	 }
 
 	 /**
-	This method gets the details of a patient using their ID. It returns a String
-	containing the patient's ID, last name, first name, and antecedents.
+	This method gets the name of a patient using their ID. It returns a String
+	containing the patient's ID, last name and first name.
 	@param idPatient the ID of the patient to search for
 	@return a formatted String with the patient's details, including their antecedents
 	  */
-	 public String getDetailsPatient(String idPatient) {
+	 public String getNomPatient(String idPatient) {
 		 StringBuilder str = new StringBuilder();
 		 String sql = "SELECT IdPatient, Nom, Prenom FROM patient WHERE IdPatient = ?";
 		 try {
@@ -190,14 +190,30 @@ public class GestionnaireConsultation {
 			 }
 			 pstmt.close();
 			 rs.close();
-			 //get the antecedents of the patient
-			 sql = "SELECT Antecedents FROM dossier WHERE PatientID = ?";
-			 pstmt = connection.prepareStatement(sql);
+		 } catch (SQLException e) {
+			 e.printStackTrace();
+		 }
+		 return str.toString();
+	 }
+
+	 /**
+	This method gets the details of a patient using their ID. It returns a String
+	containing the patient's ID, last name, first name, and antecedents.
+	@param idPatient the ID of the patient to search for
+	@return a formatted String with the patient's details, including their antecedents
+	  */
+	 public String getDetailsPatient(String idPatient) {
+		 StringBuilder str = new StringBuilder();
+		 //get the antecedents of the patient
+		 String sql = "SELECT Antecedents FROM dossier WHERE IdDossier = ?";
+		 try {
+			 PreparedStatement pstmt = connection.prepareStatement(sql);
 			 pstmt.setString(1, idPatient);
+			 ResultSet rs = pstmt.executeQuery();
 			 rs = pstmt.executeQuery();
 			 if (rs.next()) {
 				 String antecedents = rs.getString("Antecedents");
-				 str.append("Antecedents: ").append("\n").append(antecedents);
+				 str.append(antecedents);
 			 }
 			 pstmt.close();
 			 rs.close();
