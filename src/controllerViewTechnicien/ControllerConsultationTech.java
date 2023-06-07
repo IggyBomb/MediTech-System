@@ -23,8 +23,13 @@ public class ControllerConsultationTech {
 
 	public String getPrescription() {
 		this.consult = gestionnaire.getConsultationByID(view.getIdConsultation());
+		try {
 		String appareilMed = "Description: \n" + consult.findOrdonnance().getAppareilMedical() + "\n" +"status: " + consult.findOrdonnance().getDeviceStatus();
 		return appareilMed;
+		}catch(NullPointerException e) {
+			JOptionPane.showMessageDialog(view.getContentPane(), "Prescription not found", "Prescription results", JOptionPane.INFORMATION_MESSAGE);
+		}
+		return null;
 	}
 
 	public class octroyerMedicalDevice implements ActionListener{

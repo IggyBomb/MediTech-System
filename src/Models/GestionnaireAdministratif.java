@@ -111,12 +111,11 @@ public class GestionnaireAdministratif {
 			// Insert dossier in the database
 			Dossier dossier = new Dossier(patient);
 			patient.setDossier(dossier);
-			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents, PatientID) VALUES (?, ?, ?, ?)";
+			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
 			pstmt = connection.prepareStatement(dossierSql);
 			pstmt.setString(1, dossier.getIdDossier());
 			pstmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
 			pstmt.setString(3, dossier.getAntecedents());
-			pstmt.setString(4, patient.getIdPatient());
 			pstmt.executeUpdate();
 			pstmt.close();
 
@@ -148,7 +147,7 @@ public class GestionnaireAdministratif {
 	        // Start a transaction
 	        connection.setAutoCommit(false);
 	        // Delete the patient's dossier first, if it exists
-	        String dossierSql = "DELETE FROM dossier WHERE PatientID = ?";
+	        String dossierSql = "DELETE FROM dossier WHERE IdDossier = ?";
 	        PreparedStatement pstmt = connection.prepareStatement(dossierSql);
 	        pstmt.setString(1, id);
 	        pstmt.executeUpdate();

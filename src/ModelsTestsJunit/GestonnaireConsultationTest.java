@@ -65,8 +65,7 @@ public class GestonnaireConsultationTest {
 		pstmt.close();
 		connection.close();
 	}
-
-
+	
 	@Test
 	public void testGetConsultationByID() {
 		// Add a new consultation to the database
@@ -103,6 +102,8 @@ public class GestonnaireConsultationTest {
 		assertEquals(consultation.getDetailsCliniques(), DBConsultation.getDetailsCliniques());
 		assertEquals(consultation.getDate(), DBConsultation.getDate());
 		assertEquals(consultation.getOrdonnance(), DBConsultation.getOrdonnance());
+		gestionnaire.deleteConsultation("Test_1");
+		
 	}
 
 
@@ -117,9 +118,9 @@ public class GestonnaireConsultationTest {
 		gestionnaire.addConsultation(c3);
 		List<Consultation> result = gestionnaire.listConsultationPatient("1_pat");
 		assertNotNull(result);
-		assertEquals(4, result.size());
-		assertEquals(c1.getIdConsult(), result.get(1).getIdConsult());
-		assertEquals(c2.getIdConsult(), result.get(2).getIdConsult());
+		assertEquals(3, result.size());
+		assertEquals(c1.getIdConsult(), result.get(0).getIdConsult());
+		assertEquals(c2.getIdConsult(), result.get(1).getIdConsult());
 		// Delete test data
 		gestionnaire.deleteConsultation(c1.getIdConsult());
 		gestionnaire.deleteConsultation(c2.getIdConsult());
@@ -149,7 +150,7 @@ public class GestonnaireConsultationTest {
 		dossier.setAntecedents("Antecedents test");
 		admin.updateDossier(dossier);
 		// Retrieve the patient details and antecedents
-		String expectedDetails = "2_pat - Macron Emmanuel\nAntecedents: \nAntecedents test";
+		String expectedDetails = "Antecedents test";
 		String actualDetails = gestionnaire.getDetailsPatient(patient.getIdPatient());
 		assertEquals(expectedDetails, actualDetails);
 		// Delete the test patient and dossier from the database
@@ -160,28 +161,31 @@ public class GestonnaireConsultationTest {
 	/*
 	@Test
 	public void testListConsultationPatientByName() {
-		Patient newPatient = new Patient("Cuban", "Mark", "Chicago", LocalDateTime.of(1990, 1, 1, 0, 0), "test2");
-		admin.insertPatient(newPatient);
-	    // Insert test data
-	    Consultation c1 = new Consultation("Test5", "test2", "1_med", "details_test1", LocalDateTime.of(2023, 1, 1, 0, 0));
-	    Consultation c2 = new Consultation("Test6", "test2", "1_med", "details_test2", LocalDateTime.of(2022, 1, 1, 0, 0));
-	    Consultation c3 = new Consultation("Test7", "test2", "1_med", "details_test3", LocalDateTime.of(2021, 1, 1, 0, 0));
-	    gestionnaire.addConsultation(c1);
-	    gestionnaire.addConsultation(c2);
-	    gestionnaire.addConsultation(c3);
-	    // Test the listConsultationPatientByName method
-	    List<Consultation> result = gestionnaire.listConsultationPatientByName("Cuban Mark");
-	    // Check if the result is not null and has the correct number of consultations
-	    assertNotNull(result);
-	    assertEquals(3, result.size());
-	    // Delete test data
-	    gestionnaire.deleteConsultation(c1.getIdConsult());
-	    gestionnaire.deleteConsultation(c2.getIdConsult());
-	    gestionnaire.deleteConsultation(c3.getIdConsult());
-	    admin.deletePatient("test2");
+		// Add new patients and consultations to the database
+		Patient patient1 = new Patient("John", "Doe", "New York", LocalDateTime.of(1990, 1, 1, 0, 0), "john1");
+		Patient patient2 = new Patient("John", "Doe", "Los Angeles", LocalDateTime.of(1990, 2, 2, 0, 0), "john2");
+		admin.insertPatient(patient1);
+		admin.insertPatient(patient2);
+		Consultation consultation1 = new Consultation("C1", "john1", "1_med", "details_test", LocalDateTime.now());
+		Consultation consultation2 = new Consultation("C2", "john2", "1_med", "details_test", LocalDateTime.now());
+		gestionnaire.addConsultation(consultation1);
+		gestionnaire.addConsultation(consultation2);
+
+		// Test the listConsultationPatientByName method
+		List<Consultation> result = gestionnaire.listConsultationPatientByName("John Doe");
+
+		// Check if the result is not null and contains the consultations we added
+		assertNotNull(result);
+		assertTrue(result.stream().anyMatch(c -> c.getIdConsult().equals("C1")));
+		assertTrue(result.stream().anyMatch(c -> c.getIdConsult().equals("C2")));
+
+		// Clean up the test data
+		gestionnaire.deleteConsultation(consultation1.getIdConsult());
+		gestionnaire.deleteConsultation(consultation2.getIdConsult());
+		admin.deletePatient(patient1.getIdPatient());
+		admin.deletePatient(patient2.getIdPatient());
 	}
 	*/
-	
 
 
 

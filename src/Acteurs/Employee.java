@@ -1,6 +1,6 @@
 package Acteurs;
 
-public abstract class Employee {
+public class Employee {
 	private String id;
 	private String nom;
 	private String prenom;

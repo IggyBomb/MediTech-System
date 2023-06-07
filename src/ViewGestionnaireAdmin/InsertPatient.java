@@ -129,6 +129,7 @@ public class InsertPatient extends JFrame {
 		        // Show a message to the user depending on the result of the insertion
 		        if (insertionSuccessful) {
 		        	JOptionPane.showMessageDialog(contentPane, "Patient added to the database.", "Insert Patient", JOptionPane.INFORMATION_MESSAGE);
+		        	dispose();
 		        } else {
 		            JOptionPane.showMessageDialog(contentPane, "An error occurred when adding the patient.", "Insert Patient", JOptionPane.ERROR_MESSAGE);
 		        }

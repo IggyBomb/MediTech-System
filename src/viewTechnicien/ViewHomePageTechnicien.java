@@ -5,18 +5,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-
-import Acteurs.Patient;
-import Models.Consultation;
-import Models.GestionnaireConsultation;
-import controllerViewMedecin.ControllerHomePageMedecin;
 import controllerViewTechnicien.ControllerHomePageTechnician;
-
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -63,8 +55,8 @@ public class ViewHomePageTechnicien extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblTitle = new JLabel("Gestionnaire Consultation");
-		lblTitle.setBounds(267, 25, 214, 13);
+		JLabel lblTitle = new JLabel("Gestionnaire Consultation Technicien");
+		lblTitle.setBounds(267, 25, 365, 13);
 		lblTitle.setFont(new Font("Verdana Pro", Font.BOLD, 14));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.add(lblTitle);
@@ -87,7 +79,10 @@ public class ViewHomePageTechnicien extends JFrame {
 		JButton btnSearchConsultationID_clinical = new JButton("Search");
 		btnSearchConsultationID_clinical.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Boolean result = controller.searchOrdonnanceById(getIdConsultTech());
+				if(result) {
 				ViewConsultationTech.main(ViewHomePageTechnicien.this, getIdConsultTech());
+				}
 			}
 		});
 		btnSearchConsultationID_clinical.setBounds(114, 53, 85, 21);
@@ -119,7 +114,7 @@ public class ViewHomePageTechnicien extends JFrame {
 		scrollPane.setViewportView(tableResults);
 		
 		JButton btnSearchConsultationID_admin = new JButton("Search");
-		btnSearchConsultationID_admin.addActionListener(controller.new searchConsultationsByID());
+		btnSearchConsultationID_admin.addActionListener(controller.new TableResultsSearch());
 		btnSearchConsultationID_admin.setBounds(114, 52, 85, 21);
 		panel_1.add(btnSearchConsultationID_admin);
 	}

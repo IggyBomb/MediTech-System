@@ -12,6 +12,7 @@ import Acteurs.Patient;
 import Models.Consultation;
 import Models.GestionnaireAdministratif;
 import Models.GestionnaireConsultation;
+import constrollersViewAdmin.ControllerViewHomePageAdmin;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -25,8 +26,9 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JComboBox;
 
-public class admin {
+public class ViewHomePageAdmin {
 
+	private JPanel contentPane;
 	private GestionnaireAdministratif Admin =  new GestionnaireAdministratif("root", "T1t4n1c0");
 	private GestionnaireConsultation gestionnaireConsult = new GestionnaireConsultation("root", "T1t4n1c0");
 	private JFrame frame;
@@ -35,6 +37,8 @@ public class admin {
 	private JTable tableResultsPatient;
 	private JTable tableResultsConsult;
 	private JTextField textField_idPatientConsult;
+	private JTextField textField_searchByName;
+	private ControllerViewHomePageAdmin controller;
 
 	/**
 	 * Launch the application.
@@ -43,7 +47,7 @@ public class admin {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					admin window = new admin();
+					ViewHomePageAdmin window = new ViewHomePageAdmin();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,7 +59,7 @@ public class admin {
 	/**
 	 * Create the application.
 	 */
-	public admin() {
+	public ViewHomePageAdmin() {
 		initialize();
 
 	}
@@ -64,9 +68,10 @@ public class admin {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		controller = new ControllerViewHomePageAdmin(this);
 		frame = new JFrame();
 		frame.setBounds(100, 100, 703, 676);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		JLabel lblNewLabel = new JLabel("Gestionnaire Administratif");
@@ -330,7 +335,7 @@ public class admin {
 				InsertConsultationAdmin.main(null);
 			}
 		});
-		btnNewConsultation.setBounds(68, 556, 120, 33);
+		btnNewConsultation.setBounds(304, 584, 120, 33);
 		frame.getContentPane().add(btnNewConsultation);
 		
 		JButton btnDeleteConsult = new JButton("Delete Consultation");
@@ -339,11 +344,43 @@ public class admin {
 				DeleteConsultation.main(null);
 			}
 		});
-		btnDeleteConsult.setBounds(291, 556, 122, 33);
+		btnDeleteConsult.setBounds(527, 584, 122, 33);
 		frame.getContentPane().add(btnDeleteConsult);
 		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new TitledBorder(null, "Search Consultations by Name", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_3.setBounds(10, 533, 271, 96);
+		frame.getContentPane().add(panel_3);
+		panel_3.setLayout(null);
+		
+		JLabel lblNewLabel_2 = new JLabel("Patient name");
+		lblNewLabel_2.setBounds(10, 34, 89, 13);
+		panel_3.add(lblNewLabel_2);
+		
+		textField_searchByName = new JTextField();
+		textField_searchByName.setBounds(113, 29, 143, 19);
+		panel_3.add(textField_searchByName);
+		textField_searchByName.setColumns(10);
+		
+		JButton btnSearchName = new JButton("Search");
+		btnSearchName.addActionListener(controller.new ShowResultsTableSearchByName());
+		btnSearchName.setBounds(111, 59, 85, 21);
+		panel_3.add(btnSearchName);
+	}
+	
+	public String getPatientNameConsult() {
+		return textField_searchByName.getText();
+	}
+	
+	public JPanel getContentPane() {
+		return this.contentPane;
+	}
+	
+	public JTable getTableResultConsult() {
+		return this.tableResultsConsult;
+	}
 
-
-
+	public void setTableResultConsult(JTable tableResult) {
+		this.tableResultsConsult = tableResult;
 	}
 }

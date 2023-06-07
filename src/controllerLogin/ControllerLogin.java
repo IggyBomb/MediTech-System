@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 import Main.ViewLogin;
 import Models.GestionnaireAdministratif;
-import ViewGestionnaireAdmin.admin;
+import ViewGestionnaireAdmin.ViewHomePageAdmin;
 import viewMedecin.ViewHomePageMedecin;
 
 
@@ -47,7 +47,7 @@ public class ControllerLogin {
 				boolean access = Admin.accessAdmin(user, password);
 				if(access) {
 					view.dispose();
-					admin.main(null);
+					ViewHomePageAdmin.main(null);
 				}else {
 					JOptionPane.showMessageDialog(view, "Incorrect credentials.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}

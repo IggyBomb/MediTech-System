@@ -11,10 +11,12 @@ import java.util.List;
 
 import Acteurs.Patient;
 
+
 public class GestionnaireConsultation {
 	private String url;
 	private String login, password;
 	private Connection connection;
+	private GestionnaireAdministratif ga;
 
 	public GestionnaireConsultation(String login, String pass) {
 		this.url = "jdbc:mysql://127.0.0.1:3306/nfa019project";
@@ -71,43 +73,61 @@ public class GestionnaireConsultation {
 		return listConsultation;
 	}
 
-	/*
-	// search all the consultation with the same patient, using the Name of the patient as key
-		public List<Consultation> listConsultationPatientByName(String fullName){
-			GestionnaireAdministratif ga = new GestionnaireAdministratif("root", "T1t4n1c0");
-			List<Patient> patients = ga.searchPatientsByName(fullName);
 
-			Patient newPatient;
-			List<Consultation> listConsultation = new ArrayList<Consultation>();
-			String sql = "SELECT";
-			try {
-		        PreparedStatement pstmt = connection.prepareStatement(sql);
-		        pstmt.setString(1, lastName);
-		        pstmt.setString(2, firstName);
-		        ResultSet rs = pstmt.executeQuery();
-		        while (rs.next()) {
-		            String IdConsult = rs.getString("IdConsult");
-		            String patient = rs.getString("PatientID");
-		            String medicin = rs.getString("MedecinID");
-		            String details = rs.getString("DetailsCliniques");
-		            LocalDateTime dateConsult = rs.getTimestamp("Date").toLocalDateTime();
-		            Consultation consultation = new Consultation(IdConsult, patient, medicin, details, dateConsult);
-		            listConsultation.add(consultation);
-		        }
-		        pstmt.close();
-		        rs.close();
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		    }
-		    return listConsultation;
-		}
-	 */
+	/**
+	 * Retrieves a list of all consultations associated with patients matching a given name.
+	 *
+	 * @param fullName The full name of the patient as a string.
+	 * @return A List of Consultation objects corresponding to all consultations related to the patients with the specified name.
+	 * @throws SQLException If there is an error executing the SQL query.
+	 */	
+	public List<Consultation> listConsultationPatientByName(String fullName){
+	    GestionnaireAdministratif ga = new GestionnaireAdministratif("root", "T1t4n1c0");
+	    List<Patient> patients = ga.searchPatientsByName(fullName);
+	    List<Consultation> listConsultation = new ArrayList<Consultation>();
+	    for(int i = 0; i<patients.size(); i++) {
+	        Patient p = patients.get(i);
+	        String sql = "SELECT * FROM consultation WHERE PatientID = ?";
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+	        try {
+	            pstmt = connection.prepareStatement(sql);
+	            pstmt.setString(1, p.getIdPatient());
+	            rs = pstmt.executeQuery();
+	            while (rs != null && rs.next()) {
+	                String IdConsult = rs.getString("IdConsult");
+	                String patient = rs.getString("PatientID");
+	                String medicin = rs.getString("MedecinID");
+	                String details = rs.getString("DetailsCliniques");
+	                LocalDateTime dateConsult = rs.getTimestamp("Date").toLocalDateTime();
+	                Consultation consultation = new Consultation(IdConsult, patient, medicin, details, dateConsult);
+	                listConsultation.add(consultation);
+	            }
+	        } catch(SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (rs != null) {
+	                    rs.close();
+	                }
+	                if (pstmt != null) {
+	                    pstmt.close();
+	                }
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	    return listConsultation;
+	}
+
 
 	/**
 	 * Add a consultation from the database.
 	 * 
 	 * @return true if the consultation was added successfully, false otherwise
-	 */	public boolean addConsultation(Consultation consultation) {
+	 */
+	public boolean addConsultation(Consultation consultation) {
 		 String sql = "INSERT INTO consultation (IdConsult, PatientID, MedecinID, DetailsCliniques, Date) VALUES (?, ?, ?, ?, ?)";
 		 try {
 			 PreparedStatement pstmt = connection.prepareStatement(sql);

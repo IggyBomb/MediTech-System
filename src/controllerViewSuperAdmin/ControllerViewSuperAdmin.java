@@ -2,6 +2,7 @@ package controllerViewSuperAdmin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +18,7 @@ public class ControllerViewSuperAdmin {
 		this.view = view;
 	}
 
-	public class searchEmployee implements ActionListener{
+	public class searchEmployeeByID implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			Employee employee = model.findEmployeeByID(view.getIdEmployee());
 			String accountEmployee = model.searchUser(view.getIdEmployee());
@@ -41,5 +42,48 @@ public class ControllerViewSuperAdmin {
 		}
 	}
 
+	public class SearchEmployeeByName implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			List<Employee> employees = model.searchEmployeeByName(view.getName());
+			if(employees.isEmpty()) {
+				JOptionPane.showMessageDialog(view.getContentPane(), "Name not found.", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+			}else {
+				String[] columnNames = {"Id", "Nom", "Prenom", "Profession"};
+				DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+				for(int i = 0; i<employees.size(); i++) {
+					Employee emp = employees.get(i);
+					Object[] rowData = {
+							emp.getId(),
+							emp.getNom(),
+							emp.getPrenom(),
+							model.findProfession(emp.getId())
+					};
+					tableModel.addRow(rowData);
+					view.getTableResults().setModel(tableModel); // Set the table model for tableResult
+				}
+			}
+		}
+	}
+	
+	public class deleteEmployee implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			boolean result = model.deleteEmployee(view.getIdDelete());
+			if(result) {
+				model.deleteUser(view.getIdDelete());
+				JOptionPane.showMessageDialog(view.getContentPane(), "Employee deleted", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+			}else {
+				JOptionPane.showMessageDialog(view.getContentPane(), "No employee with this ID", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+	}
+	
+	public boolean checkId(String id) {
+		Employee emp = model.findEmployeeByID(id);
+		if(emp == null) {
+			return false;
+		}else {
+			return true;
+		}
+	}
 }
 
