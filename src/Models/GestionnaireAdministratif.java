@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
@@ -93,52 +94,60 @@ public class GestionnaireAdministratif {
 	    return patients;
 	}
 
-	public boolean insertPatient(Patient patient) {
-		boolean insertionSuccessful = false;
-		try {
-			// Start transaction
-			connection.setAutoCommit(false);
-			// Insert patient
-			String patientSql = "INSERT INTO patient (IdPatient, Nom, Prenom, DateNaissance, Adresse) VALUES (?, ?, ?, ?, ?)";
-			PreparedStatement pstmt = connection.prepareStatement(patientSql);
-			pstmt.setString(1, patient.getIdPatient());
-			pstmt.setString(2, patient.getNom());
-			pstmt.setString(3, patient.getPrenom());
-			pstmt.setTimestamp(4, Timestamp.valueOf(patient.getDateNaissance()));
-			pstmt.setString(5, patient.getAdresse());
-			pstmt.executeUpdate();
-			pstmt.close();
-			// Insert dossier in the database
-			Dossier dossier = new Dossier(patient);
-			patient.setDossier(dossier);
-			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
-			pstmt = connection.prepareStatement(dossierSql);
-			pstmt.setString(1, dossier.getIdDossier());
-			pstmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
-			pstmt.setString(3, dossier.getAntecedents());
-			pstmt.executeUpdate();
-			pstmt.close();
+	public boolean insertPatient (Patient patient) throws SQLIntegrityConstraintViolationException {
+	    boolean insertionSuccessful = false;
+	    try {
+	        // Start transaction
+	        connection.setAutoCommit(false);
+	        // Insert patient
+	        String patientSql = "INSERT INTO patient (IdPatient, Nom, Prenom, DateNaissance, Adresse) VALUES (?, ?, ?, ?, ?)";
+	        PreparedStatement pstmt = connection.prepareStatement(patientSql);
+	        pstmt.setString(1, patient.getIdPatient());
+	        pstmt.setString(2, patient.getNom());
+	        pstmt.setString(3, patient.getPrenom());
+	        pstmt.setTimestamp(4, Timestamp.valueOf(patient.getDateNaissance()));
+	        pstmt.setString(5, patient.getAdresse());
+	        pstmt.executeUpdate();
+	        pstmt.close();
+	        // Insert dossier in the database
+	        Dossier dossier = new Dossier(patient);
+	        patient.setDossier(dossier);
+	        String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
+	        pstmt = connection.prepareStatement(dossierSql);
+	        pstmt.setString(1, dossier.getIdDossier());
+	        pstmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
+	        pstmt.setString(3, dossier.getAntecedents());
+	        pstmt.executeUpdate();
+	        pstmt.close();
 
-			// Commit transaction
-			connection.commit();
-			insertionSuccessful = true;
-		} catch (SQLException e) {
-			// Rollback transaction
-			try {
-				connection.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		} finally {
-			try {
-				// Reset connection to default behavior
-				connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return insertionSuccessful;
+	        // Commit transaction
+	        connection.commit();
+	        insertionSuccessful = true;
+	    } catch (SQLIntegrityConstraintViolationException e) {
+	        // Rollback transaction
+	        try {
+	            connection.rollback();
+	        } catch (SQLException e1) {
+	            e1.printStackTrace();
+	        }
+	        throw e; // re-throw the exception
+	    } catch (SQLException e) {
+	        // Rollback transaction
+	        try {
+	            connection.rollback();
+	        } catch (SQLException e1) {
+	            e1.printStackTrace();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            // Reset connection to default behavior
+	            connection.setAutoCommit(true);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return insertionSuccessful;
 	}
 	
 	//delete a patient based on the ID

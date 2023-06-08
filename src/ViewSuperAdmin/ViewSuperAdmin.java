@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
+import javax.swing.JComboBox;
 
 public class ViewSuperAdmin extends JFrame {
 
@@ -32,6 +33,7 @@ public class ViewSuperAdmin extends JFrame {
 	private JTextField textField_name;
 	private JTextField textField_ID_delete;
 	private JTextField textField_idUpdate;
+	private JComboBox comboBox;
 
 	/**
 	 * Launch the application.
@@ -181,6 +183,29 @@ public class ViewSuperAdmin extends JFrame {
 		textField_idUpdate.setBounds(30, 25, 123, 19);
 		panel_3.add(textField_idUpdate);
 		textField_idUpdate.setColumns(10);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new TitledBorder(null, "List Employees", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_4.setBounds(241, 161, 172, 106);
+		contentPane.add(panel_4);
+		panel_4.setLayout(null);
+		
+		JLabel lblNewLabel_3 = new JLabel("Profession");
+		lblNewLabel_3.setBounds(45, 24, 69, 13);
+		panel_4.add(lblNewLabel_3);
+		
+		comboBox = new JComboBox();
+		comboBox.setBounds(10, 41, 140, 21);
+		panel_4.add(comboBox);
+		comboBox.addItem("medecin");
+		comboBox.addItem("technicien");
+		comboBox.addItem("admin");
+		comboBox.addItem("superAdmin");
+		
+		JButton btnSearchProfession = new JButton("Search");
+		btnSearchProfession.addActionListener(controller.new searchEmployeeByProfession());
+		btnSearchProfession.setBounds(45, 75, 85, 21);
+		panel_4.add(btnSearchProfession);
 	}
 
 	public String getIdEmployee() {
@@ -197,5 +222,18 @@ public class ViewSuperAdmin extends JFrame {
 
 	public String getIdDelete() {
 		return textField_ID_delete.getText();
+	}
+	
+	public String getProfession() {
+	    Object selectedItem = comboBox.getSelectedItem();
+	    if (selectedItem != null) {
+	    	System.out.println(selectedItem);
+	        if(selectedItem.equals("superAdmin")) {
+	        	selectedItem = "admin";
+	        }
+	        return selectedItem.toString();
+	    } else {
+	        return null;
+	    }
 	}
 }

@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -107,7 +108,7 @@ class GestonnaireAdminTests {
 	}
 
 	@Test
-	public void testDeletePatient() {
+	public void testDeletePatient() throws SQLIntegrityConstraintViolationException {
 		// Create a new patient for testing
 		Patient patient = new Patient("Trump", "Donald", "Chicago", LocalDateTime.of(1970, 1, 1, 0, 0), "3");
 		boolean insertionSuccessful = gestionnaire.insertPatient(patient);

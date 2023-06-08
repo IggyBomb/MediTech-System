@@ -216,6 +216,7 @@ public class GestionnaireSuperAdmin {
 		}
 		return employee;
 	}
+	
 
 
 
@@ -271,6 +272,36 @@ public class GestionnaireSuperAdmin {
 			e.printStackTrace();
 		}
 		return profession;
+	}
+	
+	/**
+	 * Search employees by their profession.
+	 *
+	 * @param profession The profession to search by.
+	 * @return A List of Employee objects with the given profession.
+	 * @throws SQLException If there is an error executing the SQL query.
+	 */
+	public List<Employee> searchEmployeeByProfession(String profession){
+		List<Employee> list = new ArrayList<>();
+		String sql = "SELECT * FROM " + profession;
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				String id = rs.getString("Id");
+				String nom = rs.getString("Nom");
+				String prenom = rs.getString("Prenom");
+				String adresse = rs.getString("Adresse");
+				Double salaire = rs.getDouble("Salaire");
+				Employee employee  = new Employee(id, nom, prenom, adresse, salaire);
+				list.add(employee);
+			}
+			pstmt.close();
+			rs.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	/**

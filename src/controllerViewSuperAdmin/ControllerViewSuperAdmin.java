@@ -59,12 +59,12 @@ public class ControllerViewSuperAdmin {
 							model.findProfession(emp.getId())
 					};
 					tableModel.addRow(rowData);
-					view.getTableResults().setModel(tableModel); // Set the table model for tableResult
+					view.getTableResults().setModel(tableModel);
 				}
 			}
 		}
 	}
-	
+
 	public class deleteEmployee implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			boolean result = model.deleteEmployee(view.getIdDelete());
@@ -73,6 +73,29 @@ public class ControllerViewSuperAdmin {
 				JOptionPane.showMessageDialog(view.getContentPane(), "Employee deleted", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
 			}else {
 				JOptionPane.showMessageDialog(view.getContentPane(), "No employee with this ID", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+	}
+
+	public class searchEmployeeByProfession implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			List<Employee> list = model.searchEmployeeByProfession(view.getProfession());
+			if(list.isEmpty()) {
+				JOptionPane.showMessageDialog(view.getContentPane(), "No employees in this role.", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+			}else {
+				String[] columnNames = {"Id", "Nom", "Prenom", "Profession"};
+				DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+				for(int i = 0; i<list.size(); i++) {
+					Employee emp = list.get(i);
+					Object[] rowData = {
+							emp.getId(),
+							emp.getNom(),
+							emp.getPrenom(),
+							model.findProfession(emp.getId())
+					};
+					tableModel.addRow(rowData);
+					view.getTableResults().setModel(tableModel);
+				}
 			}
 		}
 	}

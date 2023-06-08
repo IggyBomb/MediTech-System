@@ -10,6 +10,7 @@ import Main.ViewLogin;
 import Models.GestionnaireAdministratif;
 import ViewGestionnaireAdmin.ViewHomePageAdmin;
 import viewMedecin.ViewHomePageMedecin;
+import viewTechnicien.ViewHomePageTechnicien;
 
 
 public class ControllerLogin {
@@ -51,8 +52,7 @@ public class ControllerLogin {
 				}else {
 					JOptionPane.showMessageDialog(view, "Incorrect credentials.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}
-			} catch (SQLException e1) {
-
+			} catch(SQLException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -66,6 +66,7 @@ public class ControllerLogin {
 				boolean access = Admin.accessTechnicien(user, password);
 				if(access) {
 					view.dispose();
+					ViewHomePageTechnicien.main(null);
 				}else {
 					JOptionPane.showMessageDialog(view, "Incorrect credentials.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}

@@ -24,7 +24,7 @@ import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JComboBox;
+
 
 public class ViewHomePageAdmin {
 
@@ -190,7 +190,7 @@ public class ViewHomePageAdmin {
 		JButton btnInsert = new JButton("New patient");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				InsertPatient.main(null);
+				ViewInsertPatient.main(null);
 
 			}
 		});

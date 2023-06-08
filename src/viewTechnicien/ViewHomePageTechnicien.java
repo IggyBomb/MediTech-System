@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
 import controllerViewTechnicien.ControllerHomePageTechnician;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -25,6 +27,7 @@ public class ViewHomePageTechnicien extends JFrame {
 	private JTextField textField_idPatient;
 	private JTable tableResults;
 	ControllerHomePageTechnician controller;
+	private JTextField textField_patientName;
 
 	/**
 	 * Launch the application.
@@ -117,6 +120,36 @@ public class ViewHomePageTechnicien extends JFrame {
 		btnSearchConsultationID_admin.addActionListener(controller.new TableResultsSearch());
 		btnSearchConsultationID_admin.setBounds(114, 52, 85, 21);
 		panel_1.add(btnSearchConsultationID_admin);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Search Consultation By Patient Name", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_2.setBounds(39, 278, 271, 98);
+		contentPane.add(panel_2);
+		panel_2.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Patient Name");
+		lblNewLabel.setBounds(10, 39, 77, 13);
+		panel_2.add(lblNewLabel);
+		
+		textField_patientName = new JTextField();
+		textField_patientName.setBounds(115, 36, 146, 19);
+		panel_2.add(textField_patientName);
+		textField_patientName.setColumns(10);
+		
+		JButton btnSearchName = new JButton("Search");
+		btnSearchName.addActionListener(controller.new ShowResultsTableSearchByName());
+		btnSearchName.setBounds(115, 67, 85, 21);
+		panel_2.add(btnSearchName);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultTableModel emptyTableModel = new DefaultTableModel();
+				tableResults.setModel(emptyTableModel); // Set the empty table model for tableResults
+			}
+		});
+		btnRefresh.setBounds(807, 367, 85, 21);
+		contentPane.add(btnRefresh);
 	}
 	
 	//getters and setters
@@ -140,4 +173,7 @@ public class ViewHomePageTechnicien extends JFrame {
 		this.tableResults = tableResult;
 	}
 	
+	public String getName() {
+		return textField_patientName.getText();
+	}
 }

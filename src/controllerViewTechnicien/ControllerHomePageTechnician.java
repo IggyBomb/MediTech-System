@@ -7,17 +7,22 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import Acteurs.Medecin;
 import Models.Consultation;
 import Models.GestionnaireConsultation;
+import Models.GestionnaireSuperAdmin;
 import Models.Ordonnance;
 import viewTechnicien.ViewHomePageTechnicien;
 
 public class ControllerHomePageTechnician {
 	private ViewHomePageTechnicien view;
-	private GestionnaireConsultation model = new GestionnaireConsultation("root", "T1t4n1c0");
+	private GestionnaireConsultation model;
+	private GestionnaireSuperAdmin modelSA;
 	
 	public ControllerHomePageTechnician(ViewHomePageTechnicien view) {
 		this.view = view;
+		model = new GestionnaireConsultation("root", "T1t4n1c0");
+		modelSA = new GestionnaireSuperAdmin("root", "T1t4n1c0");
 	}
 	
 	public class TableResultsSearch implements ActionListener{
@@ -58,6 +63,32 @@ public class ControllerHomePageTechnician {
 				return false;
 			}else {
 				return true;
+			}
+		}
+	}
+	
+	public class ShowResultsTableSearchByName implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			List<Consultation> list = model.listConsultationsByPatientNameTechnician(view.getName());
+			if(list.isEmpty()) {
+				JOptionPane.showMessageDialog(view.getContentPane(), "No Consultations found.", "Search results Consultation", JOptionPane.INFORMATION_MESSAGE);
+			}else {
+				String[] columnNames = {"IdConsult", "Patient", "Medecin", "DetailsCliniques", "Date"};
+				DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+				for(Consultation c : list) {
+					Medecin medecin = (Medecin) modelSA.findEmployeeByID(c.getMedecin());
+					String medecinName = medecin.getNom() + " " + medecin.getPrenom();
+					String patientName = model.getNomPatient(c.getPatient());
+					Object[] rowData = {
+							c.getIdConsult(),
+							patientName, 
+							medecinName,
+							c.getDetailsCliniques(),
+							c.getDate()
+					};
+					tableModel.addRow(rowData);
+				}
+				view.getTableResult().setModel(tableModel); // Set the table model for tableResult
 			}
 		}
 	}

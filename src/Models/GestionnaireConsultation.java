@@ -267,5 +267,53 @@ public class GestionnaireConsultation {
 		 }
 		 return listConsultation;
 	 }
+	 
+	 /**
+	  * Retrieves a list of all consultations associated with patients matching a given name where deviceStatus is 'instance'.
+	  *
+	  * @param Name The full name of the patient as a string.
+	  * @return A List of Consultation objects corresponding to all consultations related to the patients with the specified name 
+	  * and the deviceStatus is 'instance'.
+	  * @throws SQLException If there is an error executing the SQL query.
+	  */	
+	 public List<Consultation> listConsultationsByPatientNameTechnician(String Name){
+	     GestionnaireAdministratif ga = new GestionnaireAdministratif("root", "T1t4n1c0");
+	     List<Patient> patients = ga.searchPatientsByName(Name);
+	     List<Consultation> listConsultation = new ArrayList<Consultation>();
+	     for(int i = 0; i<patients.size(); i++) {
+	         Patient p = patients.get(i);
+	         String sql = "SELECT * FROM consultation C, Ordonnance O WHERE C.PatientID = ? AND C.IdConsult = O.consultationId AND O.deviceStatus = 'instance'";
+	         PreparedStatement pstmt = null;
+	         ResultSet rs = null;
+	         try {
+	             pstmt = connection.prepareStatement(sql);
+	             pstmt.setString(1, p.getIdPatient());
+	             rs = pstmt.executeQuery();
+	             while (rs != null && rs.next()) {
+	                 String IdConsult = rs.getString("IdConsult");
+	                 String patient = rs.getString("PatientID");
+	                 String medicin = rs.getString("MedecinID");
+	                 String details = rs.getString("DetailsCliniques");
+	                 LocalDateTime dateConsult = rs.getTimestamp("Date").toLocalDateTime();
+	                 Consultation consultation = new Consultation(IdConsult, patient, medicin, details, dateConsult);
+	                 listConsultation.add(consultation);
+	             }
+	         } catch(SQLException e) {
+	             e.printStackTrace();
+	         } finally {
+	             try {
+	                 if (rs != null) {
+	                     rs.close();
+	                 }
+	                 if (pstmt != null) {
+	                     pstmt.close();
+	                 }
+	             } catch (SQLException e) {
+	                 e.printStackTrace();
+	             }
+	         }
+	     }
+	     return listConsultation;
+	 }
 }
 
