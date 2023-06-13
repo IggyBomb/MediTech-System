@@ -1,20 +1,15 @@
 package Main;
 
 import java.awt.EventQueue;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import ViewGestionnaireAdmin.admin;
-import ViewSuperAdmin.ViewSuperAdmin;
-
+import ViewSuperAdmin.ViewSuperAdminHomePage;
+import viewStat.ViewHomePageStat;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -44,7 +39,7 @@ public class HomePage extends JFrame {
 	 */
 	public HomePage() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 279, 328);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -54,7 +49,7 @@ public class HomePage extends JFrame {
 		JLabel lblHomeP = new JLabel("HomePage");
 		lblHomeP.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHomeP.setFont(new Font("Verdana Pro", Font.BOLD, 14));
-		lblHomeP.setBounds(149, 30, 113, 35);
+		lblHomeP.setBounds(68, 28, 113, 35);
 		contentPane.add(lblHomeP);
 		
 		JButton rdbtnAdmin = new JButton("Admin");
@@ -64,7 +59,7 @@ public class HomePage extends JFrame {
                 login.setVisible(true); 	
 			}
 		});
-		rdbtnAdmin.setBounds(159, 85, 103, 21);
+		rdbtnAdmin.setBounds(78, 83, 103, 21);
 		contentPane.add(rdbtnAdmin);
 		
 		JButton rdbtnConsult = new JButton("Medecin");
@@ -74,7 +69,7 @@ public class HomePage extends JFrame {
                 login.setVisible(true); 	
 			}
 		});
-		rdbtnConsult.setBounds(159, 127, 103, 21);
+		rdbtnConsult.setBounds(78, 125, 103, 21);
 		contentPane.add(rdbtnConsult);
 		
 		JButton rdbtntechnicien = new JButton("Technicien");
@@ -84,16 +79,25 @@ public class HomePage extends JFrame {
                 login.setVisible(true); 	
 			}
 		});
-		rdbtntechnicien.setBounds(159, 168, 103, 21);
+		rdbtntechnicien.setBounds(78, 166, 103, 21);
 		contentPane.add(rdbtntechnicien);
 		
 		btnSuperAdmin = new JButton("Super Admin");
 		btnSuperAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ViewSuperAdmin.main(null);
+				ViewSuperAdminHomePage.main(null);
 			}
 		});
-		btnSuperAdmin.setBounds(159, 211, 103, 21);
+		btnSuperAdmin.setBounds(78, 209, 103, 21);
 		contentPane.add(btnSuperAdmin);
+		
+		JButton btnStat = new JButton("Statistic");
+		btnStat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ViewHomePageStat.main(null);
+			}
+		});
+		btnStat.setBounds(78, 247, 103, 21);
+		contentPane.add(btnStat);
 	}
 }

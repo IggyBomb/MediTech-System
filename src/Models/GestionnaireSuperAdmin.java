@@ -4,17 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
-
 import Acteurs.AgentAdministration;
 import Acteurs.Employee;
 import Acteurs.Medecin;
-import Acteurs.Patient;
 import Acteurs.Technicien;
-import DossierMedicale.Dossier;
 
 public class GestionnaireSuperAdmin {
 
@@ -36,26 +32,27 @@ public class GestionnaireSuperAdmin {
 	 * @param table The table to insert the employee into.
 	 * @return true if the employee was inserted successfully, false otherwise.
 	 */
-	public boolean insertEmployee(Employee employee) {
-	    String sql = "INSERT INTO " + employee.getRole() + " (Id, Nom, Prenom, Adresse, Salaire) VALUES (?, ?, ?, ?, ?)";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(sql);
-	        pstmt.setString(1, employee.getId());
-	        pstmt.setString(2, employee.getNom());
-	        pstmt.setString(3, employee.getPrenom());
-	        pstmt.setString(4, employee.getAdresse());
-	        pstmt.setDouble(5, employee.getSalaire());
-	        int rowsAffected = pstmt.executeUpdate();
-	        pstmt.close();
-	        if (rowsAffected > 0) {
-	            return true;
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return false;
+	public boolean insertEmployee(Employee employee) throws SQLIntegrityConstraintViolationException  {
+		String sql = "INSERT INTO " + employee.getRole() + " (Id, Nom, Prenom, Adresse, Salaire) VALUES (?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, employee.getId());
+			pstmt.setString(2, employee.getNom());
+			pstmt.setString(3, employee.getPrenom());
+			pstmt.setString(4, employee.getAdresse());
+			pstmt.setDouble(5, employee.getSalaire());
+			int rowsAffected = pstmt.executeUpdate();
+			pstmt.close();
+			if (rowsAffected > 0) {
+				return true;
+			}
+		} catch (SQLIntegrityConstraintViolationException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
-
 	/**
 	 * Deletes an employee from the database.
 	 * 
@@ -63,47 +60,47 @@ public class GestionnaireSuperAdmin {
 	 * @return true if the employee was deleted successfully, false otherwise
 	 */
 	public boolean deleteEmployee(String id) {
-	    String sql = 
-	            "CREATE TEMPORARY TABLE tmp AS " +
-	            "SELECT 'medecin' as source_table FROM medecin WHERE Id = ? " +
-	            "UNION " +
-	            "SELECT 'technicien' FROM technicien WHERE Id = ? " +
-	            "UNION " +
-	            "SELECT 'admin' FROM admin WHERE Id = ?";
+		String sql = 
+				"CREATE TEMPORARY TABLE tmp AS " +
+						"SELECT 'medecin' as source_table FROM medecin WHERE Id = ? " +
+						"UNION " +
+						"SELECT 'technicien' FROM technicien WHERE Id = ? " +
+						"UNION " +
+						"SELECT 'admin' FROM admin WHERE Id = ?";
 
-	    String sourceTable = "";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(sql);
-	        pstmt.setString(1, id);
-	        pstmt.setString(2, id);
-	        pstmt.setString(3, id);
-	        pstmt.execute();
+		String sourceTable = "";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, id);
+			pstmt.setString(3, id);
+			pstmt.execute();
 
-	        // Now, retrieve the source_table from the temporary table
-	        sql = "SELECT source_table FROM tmp LIMIT 1";
-	        pstmt = connection.prepareStatement(sql);
-	        ResultSet rs = pstmt.executeQuery();
-	        if (rs.next()) {
-	            sourceTable = rs.getString("source_table");
-	        }
-	        pstmt.execute("DROP TABLE tmp");  // Remember to drop the temporary table
+			// Now, retrieve the source_table from the temporary table
+			sql = "SELECT source_table FROM tmp LIMIT 1";
+			pstmt = connection.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				sourceTable = rs.getString("source_table");
+			}
+			pstmt.execute("DROP TABLE tmp");  // Remember to drop the temporary table
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    if (!sourceTable.isEmpty()) {
-	        sql = "DELETE FROM " + sourceTable + " WHERE Id = ?";
-	        try {
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setString(1, id);
-	            int deletedRows = pstmt.executeUpdate();
-	            return deletedRows > 0;
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return false;
+		if (!sourceTable.isEmpty()) {
+			sql = "DELETE FROM " + sourceTable + " WHERE Id = ?";
+			try {
+				PreparedStatement pstmt = connection.prepareStatement(sql);
+				pstmt.setString(1, id);
+				int deletedRows = pstmt.executeUpdate();
+				return deletedRows > 0;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 
@@ -113,9 +110,8 @@ public class GestionnaireSuperAdmin {
 	 * 
 	 * @return true if the employee was updated successfully, false otherwise
 	 */
-	public boolean updateEmployee(Employee employee) {
-		System.out.println(employee.getRole());
-		String sql = "UPDATE " + employee.getRole() + " SET Id = ?, Nom = ?, Prenom = ?, Adresse = ?, Salaire = ? WHERE Id = ?";
+	public boolean updateEmployee(Employee employee, String profession) {
+		String sql = "UPDATE " + profession + " SET Id = ?, Nom = ?, Prenom = ?, Adresse = ?, Salaire = ? WHERE Id = ?";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, employee.getId());
@@ -222,29 +218,93 @@ public class GestionnaireSuperAdmin {
 		}
 		return employee;
 	}
+	
+
 
 
 	/**
-	 * Deletes a technician from the database.
+	 * Search all the employees with the same name in the database.
 	 * 
-	 * @param id the ID of the doctor to delete
-	 * @return true if the doctor was deleted successfully, false otherwise
+	 * @param the name of the employee to search
+	 * @return a list with all the doctors with the same name.
 	 */
-	public boolean deleteTechnicien(String idTechnicien) {
-		String sql = "DELETE FROM technicien WHERE Id = ?";
+	public List<Employee> searchEmployeeByName(String name) {
+		List<Employee> employees = new ArrayList<>();
+		String sql = "SELECT 'medecin' as source_table, Id, Nom, Prenom, Adresse, Salaire FROM medecin WHERE Nom = ? " +
+				"UNION " +
+				"SELECT 'technicien' as source_table, Id, Nom, Prenom, Adresse, Salaire FROM technicien WHERE Nom = ? " +
+				"UNION " +
+				"SELECT 'admin' as source_table, Id, Nom, Prenom, Adresse, Salaire FROM admin WHERE Nom = ?";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, idTechnicien);
-			int deletedRows = pstmt.executeUpdate();
+			pstmt.setString(1, name);
+			pstmt.setString(2, name);
+			pstmt.setString(3, name);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String id = rs.getString("Id");
+				String nom = rs.getString("Nom");
+				String prenom = rs.getString("Prenom");
+				String adresse = rs.getString("Adresse");
+				Double salaire = rs.getDouble("Salaire");
+				Employee employee  = new Employee(id, nom, prenom, adresse, salaire);
+				employees.add(employee);
+			}
 			pstmt.close();
-			return deletedRows > 0;
+			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return employees;
 	}
-
-
+	
+	public String findProfession(String id) {
+		String profession = "";
+		String sql = "SELECT profession FROM login WHERE ID = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				profession = rs.getString("profession");
+			}
+			pstmt.close();
+			rs.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return profession;
+	}
+	
+	/**
+	 * Search employees by their profession.
+	 *
+	 * @param profession The profession to search by.
+	 * @return A List of Employee objects with the given profession.
+	 * @throws SQLException If there is an error executing the SQL query.
+	 */
+	public List<Employee> searchEmployeeByProfession(String profession){
+		List<Employee> list = new ArrayList<>();
+		String sql = "SELECT * FROM " + profession;
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				String id = rs.getString("Id");
+				String nom = rs.getString("Nom");
+				String prenom = rs.getString("Prenom");
+				String adresse = rs.getString("Adresse");
+				Double salaire = rs.getDouble("Salaire");
+				Employee employee  = new Employee(id, nom, prenom, adresse, salaire);
+				list.add(employee);
+			}
+			pstmt.close();
+			rs.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	/**
 	 * create a new User Login in the database.
@@ -291,13 +351,14 @@ public class GestionnaireSuperAdmin {
 		return false;
 	}
 
-	
+
 	/**
 	 * Search a  User  in the database.
 	 *
+	 *
 	 * @return a String with the password and username.
 	 */
-	public String searchUser(String  idEmployee){
+	public String searchUser(String idEmployee){
 		String account = "";
 		String userSql = "SELECT username, password FROM login WHERE ID = ?";
 		try {
@@ -313,6 +374,32 @@ public class GestionnaireSuperAdmin {
 			e.printStackTrace();
 		}
 		return account;
+	}
+	
+	/**
+	 * Update a  User  in the database.
+	 *
+	 * @param the new ID, the new UserName, the new Password, The new Profession, the old ID to search the account in the database
+	 * @return a boolean with the result of the update.
+	 */
+	public boolean updateUser(String ID, String user, String passw, String profess){
+		String sql = "UPDATE login SET ID = ?, username = ?, password = ?, profession = ? WHERE ID = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, ID);
+			pstmt.setString(2, user);
+			pstmt.setString(3, passw);
+			pstmt.setString(4, profess);
+			pstmt.setString(5, ID);
+			int rowsAffected = pstmt.executeUpdate();
+			pstmt.close();
+			if (rowsAffected > 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
 

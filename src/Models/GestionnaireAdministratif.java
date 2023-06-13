@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +27,14 @@ public class GestionnaireAdministratif {
 	}
 
 
-	public Dossier findDossier(String sql, String id, Patient p1) throws SQLException {
+	public Dossier findDossier(String id) throws SQLException {
+		String sql = "SELECT * FROM dossier WHERE IdDossier = ?";
 		Dossier dossier = null;
 		PreparedStatement pstmt = connection.prepareStatement(sql);
 		pstmt.setString(1, id);
 		ResultSet resultSet = pstmt.executeQuery();
 		if (resultSet.next()) {
-			dossier = new Dossier(p1);
+			dossier = new Dossier(findPatientByID(id));
 			dossier.setIdDossier(resultSet.getString("IdDossier"));
 			dossier.setDateCreation(resultSet.getTimestamp("DateCreation").toLocalDateTime());
 			dossier.setAntecedents(resultSet.getString("Antecedents"));
@@ -42,7 +45,7 @@ public class GestionnaireAdministratif {
 	}
 
 	// Search for a patient by ID
-	public Patient findByID(String id) {
+	public Patient findPatientByID(String id) {
 		Patient patient = null;
 		String patientSql = "SELECT * FROM patient WHERE IdPatient  = ?";
 		String dossierSql = "SELECT * FROM dossier WHERE IdDossier  = ?";
@@ -52,7 +55,7 @@ public class GestionnaireAdministratif {
 			ResultSet resultSet = pstmt.executeQuery();
 			if (resultSet.next()) {
 				patient = new Patient(resultSet.getString("Nom"),resultSet.getString("Prenom"), resultSet.getString("Adresse"), resultSet.getTimestamp("DateNaissance").toLocalDateTime(), resultSet.getString("IdPatient"));
-				Dossier dossier = findDossier(dossierSql, id, patient);
+				Dossier dossier = findDossier(dossierSql);
 				if (dossier != null) {
 					patient.setDossier(dossier);
 				}
@@ -66,32 +69,63 @@ public class GestionnaireAdministratif {
 	}
 
 
+	/**
+	 * Retrieves a list of all patients from the database.
+	 * Each patient is represented as a Patient object and added to a list, which is then returned.
+	 *
+	 * @return a List of Patient objects representing all patients in the database. If no patients are found,
+	 *         an empty list is returned. If a SQL error occurs, an empty list is returned and the error is printed.
+	 */
+	public List<Patient> getAllPatient(){
+		List<Patient> patients = new ArrayList<>();
+		String sql = "SELECT * FROM patient";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String id = rs.getString("IdPatient");
+				String nom = rs.getString("Nom");
+				String prenom = rs.getString("Prenom");
+				LocalDateTime dateNaissance = rs.getTimestamp("DateNaissance").toLocalDateTime();
+				String adresse = rs.getString("Adresse");
+				Patient patient = new Patient(nom, prenom, adresse, dateNaissance, id);
+				patients.add(patient);
+			}
+			pstmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return patients;
+	}	
+
+
 	// search all the patients with the same name and returns a list
 	public List<Patient> searchPatientsByName(String name) {
-	    List<Patient> patients = new ArrayList<>();
-	    String sql = "SELECT * FROM patient WHERE Nom = ?";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(sql);
-	        pstmt.setString(1, name);
-	        ResultSet rs = pstmt.executeQuery();
-	        while (rs.next()) {
-	            String id = rs.getString("IdPatient");
-	            String nom = rs.getString("Nom");
-	            String prenom = rs.getString("Prenom");
-	            LocalDateTime dateNaissance = rs.getTimestamp("DateNaissance").toLocalDateTime();
-	            String adresse = rs.getString("Adresse");
-	            Patient patient = new Patient(nom, prenom, adresse, dateNaissance, id);
-	            patients.add(patient);
-	        }
-	        pstmt.close();
-	        rs.close();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return patients;
+		List<Patient> patients = new ArrayList<>();
+		String sql = "SELECT * FROM patient WHERE Nom = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, name);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String id = rs.getString("IdPatient");
+				String nom = rs.getString("Nom");
+				String prenom = rs.getString("Prenom");
+				LocalDateTime dateNaissance = rs.getTimestamp("DateNaissance").toLocalDateTime();
+				String adresse = rs.getString("Adresse");
+				Patient patient = new Patient(nom, prenom, adresse, dateNaissance, id);
+				patients.add(patient);
+			}
+			pstmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return patients;
 	}
 
-	public boolean insertPatient(Patient patient) {
+	public boolean insertPatient (Patient patient) throws SQLIntegrityConstraintViolationException {
 		boolean insertionSuccessful = false;
 		try {
 			// Start transaction
@@ -106,21 +140,28 @@ public class GestionnaireAdministratif {
 			pstmt.setString(5, patient.getAdresse());
 			pstmt.executeUpdate();
 			pstmt.close();
-			// Insert dossier in the batabase
+			// Insert dossier in the database
 			Dossier dossier = new Dossier(patient);
 			patient.setDossier(dossier);
-			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents, PatientID) VALUES (?, ?, ?, ?)";
+			String dossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
 			pstmt = connection.prepareStatement(dossierSql);
 			pstmt.setString(1, dossier.getIdDossier());
 			pstmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
 			pstmt.setString(3, dossier.getAntecedents());
-			pstmt.setString(4, patient.getIdPatient());
 			pstmt.executeUpdate();
 			pstmt.close();
 
 			// Commit transaction
 			connection.commit();
 			insertionSuccessful = true;
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// Rollback transaction
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw e; // re-throw the exception
 		} catch (SQLException e) {
 			// Rollback transaction
 			try {
@@ -139,155 +180,179 @@ public class GestionnaireAdministratif {
 		}
 		return insertionSuccessful;
 	}
-	
+
 	//delete a patient based on the ID
 	public boolean deletePatient(String id) {
-	    try {
-	        // Start a transaction
-	        connection.setAutoCommit(false);
-	        // Delete the patient's dossier first, if it exists
-	        String dossierSql = "DELETE FROM dossier WHERE PatientID = ?";
-	        PreparedStatement pstmt = connection.prepareStatement(dossierSql);
-	        pstmt.setString(1, id);
-	        pstmt.executeUpdate();
-	        pstmt.close();
-	        // Delete the patient from the database
-	        String patientSql = "DELETE FROM patient WHERE IdPatient = ?";
-	        pstmt = connection.prepareStatement(patientSql);
-	        pstmt.setString(1, id);
-	        int rowsAffected = pstmt.executeUpdate();
-	        pstmt.close();
-	        // Commit the transaction
-	        connection.commit();
-	        // Check if the delete was successful
-	        return (rowsAffected == 1);
-	    } catch (SQLException e) {
-	        // Rollback the transaction in case of an error
-	        try {
-	            connection.rollback();
-	        } catch (SQLException ex) {
-	            ex.printStackTrace();
-	        }
-	        e.printStackTrace();
-	        return false;
-	    } finally {
-	        // Set the auto-commit back to true
-	        try {
-	            connection.setAutoCommit(true);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
+		try {
+			// Start a transaction
+			connection.setAutoCommit(false);
+			// Delete the patient's dossier first, if it exists
+			String dossierSql = "DELETE FROM dossier WHERE IdDossier = ?";
+			PreparedStatement pstmt = connection.prepareStatement(dossierSql);
+			pstmt.setString(1, id);
+			pstmt.executeUpdate();
+			pstmt.close();
+			// Delete the patient from the database
+			String patientSql = "DELETE FROM patient WHERE IdPatient = ?";
+			pstmt = connection.prepareStatement(patientSql);
+			pstmt.setString(1, id);
+			int rowsAffected = pstmt.executeUpdate();
+			pstmt.close();
+			// Commit the transaction
+			connection.commit();
+			// Check if the delete was successful
+			return (rowsAffected == 1);
+		} catch (SQLException e) {
+			// Rollback the transaction in case of an error
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+			return false;
+		} finally {
+			// Set the auto-commit back to true
+			try {
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
+
+	/**
+	This method updates a dossier.
+	@param the dossier of the patient
+	@return a boolean with the result of the operation
+	 */
 	public boolean updatePatient(Patient patient) throws SQLException {
-	    String updatePatientSql = "UPDATE patient SET Nom=?, Prenom=?, DateNaissance=?, Adresse=? WHERE IdPatient=?";
-	    PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
-	    updatePatientStmt.setString(1, patient.getNom());
-	    updatePatientStmt.setString(2, patient.getPrenom());
-	    updatePatientStmt.setTimestamp(3, Timestamp.valueOf(patient.getDateNaissance()));
-	    updatePatientStmt.setString(4, patient.getAdresse());
-	    updatePatientStmt.setString(5, patient.getIdPatient());
-	    int rowsUpdated = updatePatientStmt.executeUpdate();
-	    updatePatientStmt.close();
-	    if (rowsUpdated == 1) {
-	        return true;
-	    }
-	    return false;
+		String updatePatientSql = "UPDATE patient SET Nom=?, Prenom=?, DateNaissance=?, Adresse=? WHERE IdPatient=?";
+		PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
+		updatePatientStmt.setString(1, patient.getNom());
+		updatePatientStmt.setString(2, patient.getPrenom());
+		updatePatientStmt.setTimestamp(3, Timestamp.valueOf(patient.getDateNaissance()));
+		updatePatientStmt.setString(4, patient.getAdresse());
+		updatePatientStmt.setString(5, patient.getIdPatient());
+		int rowsUpdated = updatePatientStmt.executeUpdate();
+		updatePatientStmt.close();
+		if (rowsUpdated == 1) {
+			return true;
+		}
+		return false;
 	}
-	
-	
+
+	/**
+	This method creates a new dossier.
+	@param the dossier of the patient
+	@return a boolean with the result of the operation
+	 */
+	public boolean createDossier(String id) throws SQLException {
+		String createDossierSql = "INSERT INTO dossier (IdDossier, DateCreation, Antecedents) VALUES (?, ?, ?)";
+		PreparedStatement updatePatientStmt = connection.prepareStatement(createDossierSql); 
+		updatePatientStmt.setString(1, id);
+		updatePatientStmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+		updatePatientStmt.setNull(3, Types.VARCHAR); // Or another SQL type if 'Antecedents' is not a VARCHAR;
+		int rowsUpdated = updatePatientStmt.executeUpdate();
+		updatePatientStmt.close();
+		if (rowsUpdated == 1) {
+			return true;
+		}
+		return false;
+	}
+
+
+
 	/**
 	This method updates the dossier of a patient the details of a patient using their ID. 
 	@param the dossier of the patient
 	@return a boolean with the result of the operation
-	*/
+	 */
 	public boolean updateDossier(Dossier dossier) throws SQLException {
-	    String updatePatientSql = "UPDATE dossier SET IdDossier=?, DateCreation=?, Antecedents=?, PatientID=? WHERE IdDossier=?";
-	    PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
-	    updatePatientStmt.setString(1, dossier.getIdDossier());
-	    updatePatientStmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
-	    updatePatientStmt.setString(3, dossier.getAntecedents());
-	    updatePatientStmt.setString(4, dossier.getPatient().getIdPatient());
-	    updatePatientStmt.setString(5, dossier.getIdDossier());
-	    int rowsUpdated = updatePatientStmt.executeUpdate();
-	    updatePatientStmt.close();
-	    if (rowsUpdated == 1) {
-	        return true;
-	    }
-	    return false;
+		String updatePatientSql = "UPDATE dossier SET IdDossier=?, DateCreation=?, Antecedents=? WHERE IdDossier=?";
+		PreparedStatement updatePatientStmt = connection.prepareStatement(updatePatientSql);
+		updatePatientStmt.setString(1, dossier.getIdDossier());
+		updatePatientStmt.setTimestamp(2, Timestamp.valueOf(dossier.getDateCreation()));
+		updatePatientStmt.setString(3, dossier.getAntecedents());
+		updatePatientStmt.setString(4, dossier.getIdDossier());
+		int rowsUpdated = updatePatientStmt.executeUpdate();
+		updatePatientStmt.close();
+		if (rowsUpdated == 1) {
+			return true;
+		}
+		return false;
 	}
-	
-	
+
+
 	//For the login page, find if there is an account with the given parameters and if the user is a doctor
 	public boolean accessMedecin(String user, String password) throws SQLException {
-	    String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'medecin'";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(query);
-	        pstmt.setString(1, user);
-	        pstmt.setString(2, password);
-	        ResultSet rs = pstmt.executeQuery();
-	        if(rs.next()) {
-	            return true; // Record found with matching username and password.
-	        } else {
-	            return false; // No record found with matching username and password.
-	        }
-	    } catch (SQLException ex) {
-	        throw new SQLException(ex);
-	    }
+		String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'medecin'";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setString(1, user);
+			pstmt.setString(2, password);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true; // Record found with matching username and password.
+			} else {
+				return false; // No record found with matching username and password.
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
 	}
-	
+
 	//For the login page, find if there is an account with the given parameters and if the user is a admin
 	public boolean accessAdmin(String user, String password) throws SQLException {
-	    String query = "SELECT * FROM Login WHERE username = ? and password = ?";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(query);
-	        pstmt.setString(1, user);
-	        pstmt.setString(2, password);
-	        ResultSet rs = pstmt.executeQuery();
-	        if(rs.next()) {
-	            return true; // Record found with matching username and password.
-	        } else {
-	            return false; // No record found with matching username and password.
-	        }
-	    } catch (SQLException ex) {
-	        throw new SQLException(ex);
-	    }
+		String query = "SELECT * FROM Login WHERE username = ? and password = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setString(1, user);
+			pstmt.setString(2, password);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true; // Record found with matching username and password.
+			} else {
+				return false; // No record found with matching username and password.
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
 	}
-	
+
 	//For the login page, find if there is an account with the given parameters and if the user is a technicien
 	public boolean accessTechnicien(String user, String password) throws SQLException {
-	    String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'technicien'";
-	    try {
-	        PreparedStatement pstmt = connection.prepareStatement(query);
-	        pstmt.setString(1, user);
-	        pstmt.setString(2, password);
-	        ResultSet rs = pstmt.executeQuery();
-	        if(rs.next()) {
-	            return true; // Record found with matching username and password.
-	        } else {
-	            return false; // No record found with matching username and password.
-	        }
-	    } catch (SQLException ex) {
-	        throw new SQLException(ex);
-	    }
-	}
-	
-	//For the login page, find if there is an account with the given parameters and if the user is a technicien
-		public boolean accessSuperAdmin(String user, String password) throws SQLException {
-		    String query = "SELECT * FROM Login WHERE username = ? and password = ? ANDprofession = 'superAdmin'";
-		    try {
-		        PreparedStatement pstmt = connection.prepareStatement(query);
-		        pstmt.setString(1, user);
-		        pstmt.setString(2, password);
-		        ResultSet rs = pstmt.executeQuery();
-		        if(rs.next()) {
-		            return true; // Record found with matching username and password.
-		        } else {
-		            return false; // No record found with matching username and password.
-		        }
-		    } catch (SQLException ex) {
-		        throw new SQLException(ex);
-		    }
+		String query = "SELECT * FROM Login WHERE username = ? and password = ? and profession = 'technicien'";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setString(1, user);
+			pstmt.setString(2, password);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true; // Record found with matching username and password.
+			} else {
+				return false; // No record found with matching username and password.
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
 		}
+	}
+
+	//For the login page, find if there is an account with the given parameters and if the user is a technicien
+	public boolean accessSuperAdmin(String user, String password) throws SQLException {
+		String query = "SELECT * FROM Login WHERE username = ? and password = ? ANDprofession = 'superAdmin'";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setString(1, user);
+			pstmt.setString(2, password);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true; // Record found with matching username and password.
+			} else {
+				return false; // No record found with matching username and password.
+			}
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		}
+	}
 }

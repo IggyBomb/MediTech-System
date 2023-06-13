@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -25,6 +26,7 @@ public class ViewLogin extends JDialog {
     private JTextField textField_user;
     private JTextField textField_password;
     private String profession;
+    private JPasswordField passwordField;
 
     public ViewLogin(Frame owner, String profession) {
         super(owner, "Login", true);
@@ -52,11 +54,11 @@ public class ViewLogin extends JDialog {
         contentPanel.add(textField_user);
         textField_user.setColumns(10);
 
-        textField_password = new JTextField();
-        textField_password.setBounds(165, 118, 141, 19);
-        contentPanel.add(textField_password);
-        textField_password.setColumns(10);
-
+        passwordField = new JPasswordField();
+        passwordField.setBounds(165, 118, 141, 19);
+        contentPanel.add(passwordField);
+        passwordField.setColumns(10);
+        
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -76,10 +78,10 @@ public class ViewLogin extends JDialog {
         cancelClear.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		textField_user.setText("");
-        		textField_password.setText("");
+        		passwordField.setText("");
         	}
         });
-
+        	
         buttonPane.add(cancelClear);
     }
 
@@ -88,7 +90,7 @@ public class ViewLogin extends JDialog {
     }
 
     public String getPassword() {
-        return textField_password.getText();
+        return passwordField.getText();
     }
 }
 

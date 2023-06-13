@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +42,7 @@ class GestonnaireAdminTests {
 
 	@Test
 	public void testFindByID() {
-		Patient patient = gestionnaire.findByID("1");
+		Patient patient = gestionnaire.findPatientByID("1");
 		System.out.println(patient.getIdPatient());
 		assertNotNull(patient);
 		assertEquals("Barack", patient.getPrenom()); 
@@ -93,7 +94,7 @@ class GestonnaireAdminTests {
 		}
 		assertTrue(insertionSuccessful);
 		// Verify that the patient was added to the database
-		Patient DBPatient = gestionnaire.findByID("2");
+		Patient DBPatient = gestionnaire.findPatientByID("2");
 		assertNotNull(DBPatient);
 		assertEquals(patient.getNom(), DBPatient.getNom());
 		assertEquals(patient.getPrenom(), DBPatient.getPrenom());
@@ -107,7 +108,7 @@ class GestonnaireAdminTests {
 	}
 
 	@Test
-	public void testDeletePatient() {
+	public void testDeletePatient() throws SQLIntegrityConstraintViolationException {
 		// Create a new patient for testing
 		Patient patient = new Patient("Trump", "Donald", "Chicago", LocalDateTime.of(1970, 1, 1, 0, 0), "3");
 		boolean insertionSuccessful = gestionnaire.insertPatient(patient);
@@ -116,7 +117,7 @@ class GestonnaireAdminTests {
 		boolean deletionSuccessful = gestionnaire.deletePatient(patient.getIdPatient());
 		assertTrue(deletionSuccessful);
 		// Verify that the patient was deleted from the database
-		Patient DBPatient = gestionnaire.findByID(patient.getIdPatient());
+		Patient DBPatient = gestionnaire.findPatientByID(patient.getIdPatient());
 		assertNull(DBPatient);
 	}
 
@@ -134,7 +135,7 @@ class GestonnaireAdminTests {
 		boolean updateSuccessful = gestionnaire.updatePatient(patient);
 		assertTrue(updateSuccessful);
 		// Retrieve the updated patient from the database
-		Patient updatedPatient = gestionnaire.findByID("2");
+		Patient updatedPatient = gestionnaire.findPatientByID("2");
 		assertNotNull(updatedPatient);
 		assertEquals(patient.getNom(), updatedPatient.getNom());
 		assertEquals(patient.getPrenom(), updatedPatient.getPrenom());
@@ -176,7 +177,7 @@ class GestonnaireAdminTests {
 	    boolean updateSuccessful = gestionnaire.updateDossier(dossier);
 	    assertTrue(updateSuccessful);
 	    // Retrieve the updated dossier from the database
-	    Dossier updatedDossier = gestionnaire.findDossier("SELECT * FROM dossier WHERE IdDossier  = ?", dossier.getIdDossier(), patient);
+	    Dossier updatedDossier = gestionnaire.findDossier("SELECT * FROM dossier WHERE IdDossier  = ?");
 	    assertNotNull(updatedDossier);
 	    assertEquals(dossier.getIdDossier(), updatedDossier.getIdDossier());
 	    assertEquals(dossier.getAntecedents(), updatedDossier.getAntecedents());

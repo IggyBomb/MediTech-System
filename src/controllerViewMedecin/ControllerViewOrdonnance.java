@@ -34,6 +34,7 @@ public class ControllerViewOrdonnance {
 				o.setAppareilMedical(devices);
 				o.updateOrdonnance();
 				JOptionPane.showMessageDialog(view.getContentPane(), "Prescription created", "Prescription results", JOptionPane.INFORMATION_MESSAGE);
+				view.dispose();
 			} catch (SQLIntegrityConstraintViolationException e1) {
 				JOptionPane.showMessageDialog(view.getContentPane(), "Prescription already in the database", "Prescription results", JOptionPane.INFORMATION_MESSAGE);
 			}

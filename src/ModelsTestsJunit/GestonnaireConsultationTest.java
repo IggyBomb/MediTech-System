@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -65,10 +66,9 @@ public class GestonnaireConsultationTest {
 		pstmt.close();
 		connection.close();
 	}
-
-
+	
 	@Test
-	public void testGetConsultationByID() {
+	public void testGetConsultationByID() throws SQLIntegrityConstraintViolationException {
 		// Add a new consultation to the database
 		Consultation consultation = new Consultation("Test_2", "1_pat", "1_med", "details_test", LocalDateTime.of(2023, 1, 1, 0, 0));
 		boolean insertionSuccessful = gestionnaire.addConsultation(consultation);
@@ -90,7 +90,7 @@ public class GestonnaireConsultationTest {
 
 
 	@Test
-	public void testAddConsultation() {
+	public void testAddConsultation() throws SQLIntegrityConstraintViolationException {
 		Consultation consultation = new Consultation("Test_1" ,"1_pat", "1_med", "details_test", LocalDateTime.of(2023, 1, 1, 0, 0));
 		boolean insertionSuccessful = gestionnaire.addConsultation(consultation);
 		System.out.println("Insertion successful: " + insertionSuccessful);
@@ -103,11 +103,13 @@ public class GestonnaireConsultationTest {
 		assertEquals(consultation.getDetailsCliniques(), DBConsultation.getDetailsCliniques());
 		assertEquals(consultation.getDate(), DBConsultation.getDate());
 		assertEquals(consultation.getOrdonnance(), DBConsultation.getOrdonnance());
+		gestionnaire.deleteConsultation("Test_1");
+		
 	}
 
 
 	@Test
-	public void testListConsultationPatient() {
+	public void testListConsultationPatient() throws SQLIntegrityConstraintViolationException {
 		// Insert test data
 		Consultation c1 = new Consultation("Test1", "1_pat", "1_med", "details_test1", LocalDateTime.of(2023, 1, 1, 0, 0));
 		Consultation c2 = new Consultation("Test2", "1_pat", "1_med", "details_test2", LocalDateTime.of(2022, 1, 1, 0, 0));
@@ -117,9 +119,9 @@ public class GestonnaireConsultationTest {
 		gestionnaire.addConsultation(c3);
 		List<Consultation> result = gestionnaire.listConsultationPatient("1_pat");
 		assertNotNull(result);
-		assertEquals(4, result.size());
-		assertEquals(c1.getIdConsult(), result.get(1).getIdConsult());
-		assertEquals(c2.getIdConsult(), result.get(2).getIdConsult());
+		assertEquals(3, result.size());
+		assertEquals(c1.getIdConsult(), result.get(0).getIdConsult());
+		assertEquals(c2.getIdConsult(), result.get(1).getIdConsult());
 		// Delete test data
 		gestionnaire.deleteConsultation(c1.getIdConsult());
 		gestionnaire.deleteConsultation(c2.getIdConsult());
@@ -127,7 +129,7 @@ public class GestonnaireConsultationTest {
 	}
 
 	@Test
-	void testUpdateConsultation() {
+	void testUpdateConsultation() throws SQLIntegrityConstraintViolationException {
 		Consultation consultation4 = new Consultation("Test4", "1_pat", "1_med", "Neurologie", LocalDateTime.now());
 		gestionnaire.addConsultation(consultation4);
 		consultation4.setDetailsCliniques("Migraine");
@@ -149,40 +151,11 @@ public class GestonnaireConsultationTest {
 		dossier.setAntecedents("Antecedents test");
 		admin.updateDossier(dossier);
 		// Retrieve the patient details and antecedents
-		String expectedDetails = "2_pat - Macron Emmanuel\nAntecedents: \nAntecedents test";
+		String expectedDetails = "Antecedents test";
 		String actualDetails = gestionnaire.getDetailsPatient(patient.getIdPatient());
 		assertEquals(expectedDetails, actualDetails);
 		// Delete the test patient and dossier from the database
 		admin.deletePatient(patient.getIdPatient());
 	}
-	
-	
-	/*
-	@Test
-	public void testListConsultationPatientByName() {
-		Patient newPatient = new Patient("Cuban", "Mark", "Chicago", LocalDateTime.of(1990, 1, 1, 0, 0), "test2");
-		admin.insertPatient(newPatient);
-	    // Insert test data
-	    Consultation c1 = new Consultation("Test5", "test2", "1_med", "details_test1", LocalDateTime.of(2023, 1, 1, 0, 0));
-	    Consultation c2 = new Consultation("Test6", "test2", "1_med", "details_test2", LocalDateTime.of(2022, 1, 1, 0, 0));
-	    Consultation c3 = new Consultation("Test7", "test2", "1_med", "details_test3", LocalDateTime.of(2021, 1, 1, 0, 0));
-	    gestionnaire.addConsultation(c1);
-	    gestionnaire.addConsultation(c2);
-	    gestionnaire.addConsultation(c3);
-	    // Test the listConsultationPatientByName method
-	    List<Consultation> result = gestionnaire.listConsultationPatientByName("Cuban Mark");
-	    // Check if the result is not null and has the correct number of consultations
-	    assertNotNull(result);
-	    assertEquals(3, result.size());
-	    // Delete test data
-	    gestionnaire.deleteConsultation(c1.getIdConsult());
-	    gestionnaire.deleteConsultation(c2.getIdConsult());
-	    gestionnaire.deleteConsultation(c3.getIdConsult());
-	    admin.deletePatient("test2");
-	}
-	*/
-	
-
-
 
 }

@@ -24,6 +24,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,6 +53,9 @@ public class ViewNewConsultation extends JFrame {
 	private JTextField textField_details;
 	private String selectedPatientId;
 	private String selectedDoctorId;
+	private JSpinField hours;
+	private JSpinField minutes;
+	private JDateChooser dateChooser;
 	private ControllerNewConsultation controller;
 
 
@@ -62,7 +66,7 @@ public class ViewNewConsultation extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
+
 					ViewNewConsultation frame = new ViewNewConsultation();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -72,23 +76,23 @@ public class ViewNewConsultation extends JFrame {
 		});
 	}
 
-	
+
 	public void fillComboPhysician() throws SQLException {
-		 try {
-	            controller.fillComboPhysician(comboBox_physician);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
+		try {
+			controller.fillComboPhysician(comboBox_physician);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void fillComboPatient() throws SQLException {
-		 try {
-	            controller.fillComboPatient(comboBox_Patient);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-		
+		try {
+			controller.fillComboPatient(comboBox_Patient);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -155,7 +159,7 @@ public class ViewNewConsultation extends JFrame {
 			e.printStackTrace();
 		}
 
-		JDateChooser dateChooser = new JDateChooser();
+		dateChooser = new JDateChooser();
 		dateChooser.setBounds(191, 141, 101, 19);
 		contentPane.add(dateChooser);
 
@@ -163,11 +167,11 @@ public class ViewNewConsultation extends JFrame {
 		lblDate.setBounds(112, 141, 45, 13);
 		contentPane.add(lblDate);
 
-		JSpinField hours = new JSpinField();
+		hours = new JSpinField();
 		hours.setBounds(191, 190, 102, 19);
 		contentPane.add(hours);
 
-		JSpinField minutes = new JSpinField();
+		minutes = new JSpinField();
 		minutes.setBounds(192, 238, 102, 19);
 		contentPane.add(minutes);
 
@@ -199,46 +203,21 @@ public class ViewNewConsultation extends JFrame {
 		textField_details.setColumns(10);
 
 		JButton btnCreateNew = new JButton("Create");
-		btnCreateNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				// get selected date
-				Date selectedDate = new Date(dateChooser.getDate().getTime());
-				Instant instant = Instant.ofEpochMilli(selectedDate.getTime());
-				LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-
-				// Convert java.util.Date to java.sql.Date
-				java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
-
-				int selectedHours = hours.getValue();
-				int selectedMinutes = minutes.getValue();
-				LocalTime localTime = LocalTime.of(selectedHours, selectedMinutes);
-
-				// Combine the date and time to create a LocalDateTime object
-				LocalDateTime ConsultTime = LocalDateTime.of(localDate, localTime);
-				String details = textField_details.getText();
-				boolean insert = controller.createConsultation(textField_idConsultation.getText(), selectedPatientId, selectedDoctorId, details, ConsultTime);
-				if(insert) {
-					JOptionPane.showMessageDialog(contentPane, "Visit confirmed", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
-				}else {
-					JOptionPane.showMessageDialog(contentPane, "No!", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
-				}
-			}
-			});
+		btnCreateNew.addActionListener(controller.new createNewConsultation());
 		btnCreateNew.setBounds(107, 430, 85, 21);
 		contentPane.add(btnCreateNew);
-		
+
 		JButton btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textField_idConsultation.setText("");
 				textField_details.setText("");
-				
+
 			}
 		});
 		btnClear.setBounds(309, 430, 85, 21);
 		contentPane.add(btnClear);
-		
+
 		JButton btnClose = new JButton("Close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -247,5 +226,42 @@ public class ViewNewConsultation extends JFrame {
 		});
 		btnClose.setBounds(207, 430, 85, 21);
 		contentPane.add(btnClose);
-		}
 	}
+	
+	public String getMedecin() {
+		return selectedDoctorId;
+	}
+	
+	public String getPatient() {
+		return selectedPatientId;
+	}
+	
+	public int getHeure() {
+		return  hours.getValue();
+	}
+	
+	public int getMin() {
+		return  minutes.getValue();
+	}
+	
+	public LocalDateTime getTimeAndDate() {
+		LocalDateTime ConsultTime;
+		Date selectedDate = new Date(dateChooser.getDate().getTime());
+		Instant instant = Instant.ofEpochMilli(selectedDate.getTime());
+		LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+		int selectedHours = getHeure();
+		int selectedMinutes = getMin();
+		LocalTime localTime = LocalTime.of(selectedHours, selectedMinutes);
+
+		// Combine the date and time to create a LocalDateTime object
+		return ConsultTime = LocalDateTime.of(localDate, localTime);
+	}
+	
+	public String getDetails() {
+		return textField_details.getText();
+	}
+	
+	public String getIDConsult() {
+		return textField_idConsultation.getText();
+	}
+}
