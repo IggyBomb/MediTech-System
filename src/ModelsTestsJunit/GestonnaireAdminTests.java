@@ -42,7 +42,7 @@ class GestonnaireAdminTests {
 
 	@Test
 	public void testFindByID() {
-		Patient patient = gestionnaire.findByID("1");
+		Patient patient = gestionnaire.findPatientByID("1");
 		System.out.println(patient.getIdPatient());
 		assertNotNull(patient);
 		assertEquals("Barack", patient.getPrenom()); 
@@ -94,7 +94,7 @@ class GestonnaireAdminTests {
 		}
 		assertTrue(insertionSuccessful);
 		// Verify that the patient was added to the database
-		Patient DBPatient = gestionnaire.findByID("2");
+		Patient DBPatient = gestionnaire.findPatientByID("2");
 		assertNotNull(DBPatient);
 		assertEquals(patient.getNom(), DBPatient.getNom());
 		assertEquals(patient.getPrenom(), DBPatient.getPrenom());
@@ -117,7 +117,7 @@ class GestonnaireAdminTests {
 		boolean deletionSuccessful = gestionnaire.deletePatient(patient.getIdPatient());
 		assertTrue(deletionSuccessful);
 		// Verify that the patient was deleted from the database
-		Patient DBPatient = gestionnaire.findByID(patient.getIdPatient());
+		Patient DBPatient = gestionnaire.findPatientByID(patient.getIdPatient());
 		assertNull(DBPatient);
 	}
 
@@ -135,7 +135,7 @@ class GestonnaireAdminTests {
 		boolean updateSuccessful = gestionnaire.updatePatient(patient);
 		assertTrue(updateSuccessful);
 		// Retrieve the updated patient from the database
-		Patient updatedPatient = gestionnaire.findByID("2");
+		Patient updatedPatient = gestionnaire.findPatientByID("2");
 		assertNotNull(updatedPatient);
 		assertEquals(patient.getNom(), updatedPatient.getNom());
 		assertEquals(patient.getPrenom(), updatedPatient.getPrenom());

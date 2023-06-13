@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 import Main.ViewLogin;
 import Models.GestionnaireAdministratif;
-import ViewGestionnaireAdmin.ViewHomePageAdmin;
+import ViewAdmin.ViewHomePageAdmin;
 import viewMedecin.ViewHomePageMedecin;
 import viewTechnicien.ViewHomePageTechnicien;
 

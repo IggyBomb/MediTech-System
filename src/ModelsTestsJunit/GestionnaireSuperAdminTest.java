@@ -3,6 +3,7 @@ package ModelsTestsJunit;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -36,7 +37,7 @@ class GestionnaireSuperAdminTest {
     
     
     @Test
-    public void testInsertEmployee() {
+    public void testInsertEmployee() throws SQLIntegrityConstraintViolationException {
         Employee employee = new Medecin("test_id", "test_nom", "test_prenom", "test_adresse", 10000.00);
         boolean result = gestionnaireSuperAdmin.insertEmployee(employee);
         assertTrue(result);
@@ -56,7 +57,7 @@ class GestionnaireSuperAdminTest {
     
     
     @Test
-    public void testUpdateEmployee() {
+    public void testUpdateEmployee() throws SQLIntegrityConstraintViolationException {
         Medecin Employee = new Medecin("testUp", "Name", "Surname", "Address", 80000.00);
         gestionnaireSuperAdmin.insertEmployee(Employee);
         Medecin updatedEmployee = new Medecin("testUp", "UpdatedName", "UpdatedSurname", "UpdatedAddress", 80000.00);
@@ -110,7 +111,7 @@ class GestionnaireSuperAdminTest {
 	}
 	
 	@Test
-	public void testSearchEmployeeByName() {
+	public void testSearchEmployeeByName() throws SQLIntegrityConstraintViolationException {
 	    Employee testEmployee = new Medecin("test_id", "UniqueName", "test_surname", "test_address", 60000);
 	    gestionnaireSuperAdmin.insertEmployee(testEmployee);
 	    List<Employee> result = gestionnaireSuperAdmin.searchEmployeeByName("UniqueName");

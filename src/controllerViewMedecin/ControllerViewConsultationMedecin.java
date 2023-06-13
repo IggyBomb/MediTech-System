@@ -42,7 +42,7 @@ public class ControllerViewConsultationMedecin {
 		Consultation consult = view.getConsultation();
 		if (consult != null) {
 			String patientId = consult.getPatient();
-			Patient patient = modelAdmin.findByID(patientId);
+			Patient patient = modelAdmin.findPatientByID(patientId);
 			view.setPatient(patient);
 		}
 	}

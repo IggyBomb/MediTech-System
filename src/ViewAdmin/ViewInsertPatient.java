@@ -1,4 +1,4 @@
-package ViewGestionnaireAdmin;
+package ViewAdmin;
 
 import java.awt.EventQueue;
 import com.toedter.calendar.JDateChooser;
@@ -13,6 +13,8 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -62,17 +64,7 @@ public class ViewInsertPatient extends JFrame {
 		lblTitle.setFont(new Font("Verdana Pro", Font.BOLD, 14));
 		lblTitle.setBounds(140, 10, 189, 29);
 		contentPane.add(lblTitle);
-
-		JLabel lbl_ID = new JLabel("ID");
-		lbl_ID.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lbl_ID.setBounds(144, 54, 45, 13);
-		contentPane.add(lbl_ID);
-
-		textField_id = new JTextField();
-		textField_id.setBounds(199, 52, 96, 19);
-		contentPane.add(textField_id);
-		textField_id.setColumns(10);
-
+		
 		textField_LastName = new JTextField();
 		textField_LastName.setColumns(10);
 		textField_LastName.setBounds(199, 77, 96, 19);
@@ -92,6 +84,31 @@ public class ViewInsertPatient extends JFrame {
 		lbl_FirstName.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lbl_FirstName.setBounds(122, 108, 67, 13);
 		contentPane.add(lbl_FirstName);
+
+		JLabel lbl_ID = new JLabel("ID");
+		lbl_ID.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lbl_ID.setBounds(144, 54, 45, 13);
+		contentPane.add(lbl_ID);
+
+		textField_id = new JTextField();
+		textField_id.setBounds(199, 52, 96, 19);
+		contentPane.add(textField_id);
+		textField_id.setColumns(10);
+		textField_id.setEditable(false);
+		FocusAdapter idGenerator = new FocusAdapter() {
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        String firstName = textField_firstName.getText();
+		        String lastName = textField_LastName.getText();
+		        // Ensure both fields have enough characters
+		        if (firstName.length() >= 3 && lastName.length() >= 3) {
+		            String id = lastName.substring(0, 3) + firstName.substring(0, 3);
+		            textField_id.setText(id.toLowerCase());
+		        }
+		    }
+		};
+		textField_firstName.addFocusListener(idGenerator);
+		textField_LastName.addFocusListener(idGenerator);
 
 		textField_address = new JTextField();
 		textField_address.setColumns(10);

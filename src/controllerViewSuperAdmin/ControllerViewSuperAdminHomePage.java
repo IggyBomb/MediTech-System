@@ -8,13 +8,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Acteurs.Employee;
 import Models.GestionnaireSuperAdmin;
-import ViewSuperAdmin.ViewSuperAdmin;
+import ViewSuperAdmin.ViewSuperAdminHomePage;
 
-public class ControllerViewSuperAdmin {
-	private ViewSuperAdmin view;
+public class ControllerViewSuperAdminHomePage {
+	private ViewSuperAdminHomePage view;
 	private GestionnaireSuperAdmin model = new GestionnaireSuperAdmin("root", "T1t4n1c0");
 
-	public ControllerViewSuperAdmin(ViewSuperAdmin view) {
+	public ControllerViewSuperAdminHomePage(ViewSuperAdminHomePage view) {
 		this.view = view;
 	}
 

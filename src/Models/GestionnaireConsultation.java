@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class GestionnaireConsultation {
 	 * 
 	 * @return true if the consultation was added successfully, false otherwise
 	 */
-	public boolean addConsultation(Consultation consultation) {
+	public boolean addConsultation(Consultation consultation) throws SQLIntegrityConstraintViolationException {
 		 String sql = "INSERT INTO consultation (IdConsult, PatientID, MedecinID, DetailsCliniques, Date) VALUES (?, ?, ?, ?, ?)";
 		 try {
 			 PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -136,10 +137,14 @@ public class GestionnaireConsultation {
 			 pstmt.setString(3, consultation.getMedecin());
 			 pstmt.setString(4, consultation.getDetailsCliniques());
 			 pstmt.setTimestamp(5, Timestamp.valueOf(consultation.getDate()));
+			 try {
 			 int rowsAffected = pstmt.executeUpdate();
 			 pstmt.close();
 			 if (rowsAffected > 0) {
 				 return true;
+			 }
+			 }catch(SQLIntegrityConstraintViolationException e1) {
+				 System.out.println("Duplicate entry at consultation.PRIMARY");
 			 }
 		 } catch (SQLException e) {
 			 e.printStackTrace();

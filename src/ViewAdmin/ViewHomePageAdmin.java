@@ -1,4 +1,4 @@
-package ViewGestionnaireAdmin;
+package ViewAdmin;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -12,6 +12,7 @@ import Acteurs.Patient;
 import Models.Consultation;
 import Models.GestionnaireAdministratif;
 import Models.GestionnaireConsultation;
+import ViewSuperAdmin.ViewUpdateEmployee;
 import constrollersViewAdmin.ControllerViewHomePageAdmin;
 
 import javax.swing.JTextField;
@@ -39,6 +40,7 @@ public class ViewHomePageAdmin {
 	private JTextField textField_idPatientConsult;
 	private JTextField textField_searchByName;
 	private ControllerViewHomePageAdmin controller;
+	private JTextField textField_UpdatePat;
 
 	/**
 	 * Launch the application.
@@ -86,19 +88,19 @@ public class ViewHomePageAdmin {
 		panel.setLayout(null);
 
 		JLabel lblNewLabel_1 = new JLabel("ID ");
-		lblNewLabel_1.setBounds(10, 21, 31, 13);
+		lblNewLabel_1.setBounds(21, 21, 31, 13);
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblNewLabel_1);
 
 		IDsearchTextField = new JTextField();
-		IDsearchTextField.setBounds(44, 18, 174, 19);
+		IDsearchTextField.setBounds(62, 18, 156, 19);
 		panel.add(IDsearchTextField);
 		IDsearchTextField.setColumns(10);
 
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Patient patient = Admin.findByID(IDsearchTextField.getText());
+				Patient patient = Admin.findPatientByID(IDsearchTextField.getText());
 				if (patient == null) {
 					JOptionPane.showMessageDialog(frame, "ID not found.", "Search results", JOptionPane.INFORMATION_MESSAGE);
 				}else {
@@ -194,7 +196,7 @@ public class ViewHomePageAdmin {
 
 			}
 		});
-		btnInsert.setBounds(68, 240, 120, 33);
+		btnInsert.setBounds(398, 243, 120, 33);
 		frame.getContentPane().add(btnInsert);
 
 		JButton btnDeletePatient = new JButton("Delete patient");
@@ -203,17 +205,8 @@ public class ViewHomePageAdmin {
 				DeletePatient.main(null);
 			}
 		});
-		btnDeletePatient.setBounds(291, 240, 122, 33);
+		btnDeletePatient.setBounds(528, 243, 122, 33);
 		frame.getContentPane().add(btnDeletePatient);
-
-		JButton btnUpdatePatient = new JButton("Update patient");
-		btnUpdatePatient.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				UpdatePatient.main(null);
-			}
-		});
-		btnUpdatePatient.setBounds(516, 240, 130, 33);
-		frame.getContentPane().add(btnUpdatePatient);
 
 		JButton btnRefreshTable = new JButton("Refresh");
 		btnRefreshTable.addActionListener(new ActionListener() {
@@ -224,35 +217,35 @@ public class ViewHomePageAdmin {
 		});
 		btnRefreshTable.setBounds(564, 209, 85, 21);
 		frame.getContentPane().add(btnRefreshTable);
-		
+
 		JScrollPane scrollPane_Consult = new JScrollPane();
 		scrollPane_Consult.setBounds(248, 332, 401, 180);
 		frame.getContentPane().add(scrollPane_Consult);
-		
+
 		JLabel lblTitle2 = new JLabel("Gestionnaire Consultation");
 		lblTitle2.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitle2.setFont(new Font("Verdana Pro", Font.BOLD, 14));
-		lblTitle2.setBounds(149, 287, 271, 35);
+		lblTitle2.setBounds(149, 286, 271, 35);
 		frame.getContentPane().add(lblTitle2);
-		
+
 		JPanel panel_SearchConsult = new JPanel();
 		panel_SearchConsult.setBorder(new TitledBorder(null, "Search Consultation", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_SearchConsult.setBounds(10, 332, 228, 79);
 		frame.getContentPane().add(panel_SearchConsult);
 		panel_SearchConsult.setLayout(null);
-		
+
 		JLabel lblSearchConsult = new JLabel("Id Consultation");
 		lblSearchConsult.setBounds(10, 24, 59, 13);
 		panel_SearchConsult.add(lblSearchConsult);
-		
+
 		JTextField textField_searchConsult = new JTextField();
 		textField_searchConsult.setBounds(79, 21, 139, 19);
 		panel_SearchConsult.add(textField_searchConsult);
 		textField_searchConsult.setColumns(10);
-		
+
 		tableResultsConsult = new JTable();
 		scrollPane_Consult.setViewportView(tableResultsConsult);
-		
+
 		JButton btnSearch_Consult = new JButton("Search");
 		btnSearch_Consult.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -276,7 +269,7 @@ public class ViewHomePageAdmin {
 		});
 		btnSearch_Consult.setBounds(76, 50, 76, 19);
 		panel_SearchConsult.add(btnSearch_Consult);
-		
+
 		JButton btnRefreshTable_Consult = new JButton("Refresh");
 		btnRefreshTable_Consult.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -286,23 +279,23 @@ public class ViewHomePageAdmin {
 		});
 		btnRefreshTable_Consult.setBounds(564, 522, 85, 21);
 		frame.getContentPane().add(btnRefreshTable_Consult);
-		
+
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Search Patient Consultations", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.setBounds(10, 426, 228, 86);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
-		
+
 		JLabel lblNewLabel_PatientConsult = new JLabel("ID Patient");
 		lblNewLabel_PatientConsult.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel_PatientConsult.setBounds(10, 30, 48, 13);
 		panel_1.add(lblNewLabel_PatientConsult);
-		
+
 		textField_idPatientConsult = new JTextField();
 		textField_idPatientConsult.setBounds(83, 27, 135, 19);
 		panel_1.add(textField_idPatientConsult);
 		textField_idPatientConsult.setColumns(10);
-		
+
 		JButton btnSearch_Consult_byName = new JButton("Search");
 		btnSearch_Consult_byName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -328,59 +321,104 @@ public class ViewHomePageAdmin {
 		});
 		btnSearch_Consult_byName.setBounds(83, 56, 76, 19);
 		panel_1.add(btnSearch_Consult_byName);
-		
+
 		JButton btnNewConsultation = new JButton("New Consultation");
 		btnNewConsultation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				InsertConsultationAdmin.main(null);
 			}
 		});
-		btnNewConsultation.setBounds(304, 584, 120, 33);
+		btnNewConsultation.setBounds(304, 584, 177, 33);
 		frame.getContentPane().add(btnNewConsultation);
-		
+
 		JButton btnDeleteConsult = new JButton("Delete Consultation");
 		btnDeleteConsult.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DeleteConsultation.main(null);
 			}
 		});
-		btnDeleteConsult.setBounds(527, 584, 122, 33);
+		btnDeleteConsult.setBounds(497, 584, 152, 33);
 		frame.getContentPane().add(btnDeleteConsult);
-		
+
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new TitledBorder(null, "Search Consultations by Name", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_3.setBounds(10, 533, 271, 96);
 		frame.getContentPane().add(panel_3);
 		panel_3.setLayout(null);
-		
+
 		JLabel lblNewLabel_2 = new JLabel("Patient name");
 		lblNewLabel_2.setBounds(10, 34, 89, 13);
 		panel_3.add(lblNewLabel_2);
-		
+
 		textField_searchByName = new JTextField();
 		textField_searchByName.setBounds(113, 29, 143, 19);
 		panel_3.add(textField_searchByName);
 		textField_searchByName.setColumns(10);
-		
+
 		JButton btnSearchName = new JButton("Search");
 		btnSearchName.addActionListener(controller.new ShowResultsTableSearchByName());
 		btnSearchName.setBounds(111, 59, 85, 21);
 		panel_3.add(btnSearchName);
+
+		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new TitledBorder(null, "Update Patient Info", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_4.setBounds(13, 211, 222, 79);
+		frame.getContentPane().add(panel_4);
+		panel_4.setLayout(null);
+
+		JLabel lblNewLabel_3 = new JLabel("Id Patient");
+		lblNewLabel_3.setBounds(12, 23, 58, 13);
+		panel_4.add(lblNewLabel_3);
+
+		textField_UpdatePat = new JTextField();
+		textField_UpdatePat.setBounds(71, 20, 141, 19);
+		panel_4.add(textField_UpdatePat);
+		textField_UpdatePat.setColumns(10);
+
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					System.out.println(getIdPatientUpdate());
+					boolean result = controller.checkId(getIdPatientUpdate());
+					if(result == true) {
+						ViewUpdatePatient.main(getIdPatientUpdate());
+					}else {
+						JOptionPane.showMessageDialog(getContentPane(), "ID not found.", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}catch(NullPointerException e1) {
+					JOptionPane.showMessageDialog(getContentPane(), "Please insert an ID.", "Search results Employee", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+
+		btnUpdate.setBounds(74, 48, 85, 21);
+		panel_4.add(btnUpdate);
+		
+		JButton btnNewButton = new JButton("View All Patient");
+		btnNewButton.addActionListener(controller.new ShowAllPatients());
+		btnNewButton.setBounds(248, 243, 140, 33);
+		frame.getContentPane().add(btnNewButton);
+
 	}
-	
+
 	public String getPatientNameConsult() {
 		return textField_searchByName.getText();
 	}
-	
+
 	public JPanel getContentPane() {
 		return this.contentPane;
 	}
-	
+
 	public JTable getTableResultConsult() {
 		return this.tableResultsConsult;
 	}
-
-	public void setTableResultConsult(JTable tableResult) {
-		this.tableResultsConsult = tableResult;
+	
+	public JTable getTableResultPatient() {
+		return this.tableResultsPatient;
+	}
+	
+	public String getIdPatientUpdate() {
+		return textField_UpdatePat.getText();
 	}
 }

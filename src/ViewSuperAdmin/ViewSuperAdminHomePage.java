@@ -12,7 +12,7 @@ import java.awt.Font;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controllerViewSuperAdmin.ControllerViewSuperAdmin;
+import controllerViewSuperAdmin.ControllerViewSuperAdminHomePage;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -24,12 +24,12 @@ import javax.swing.border.EtchedBorder;
 import java.awt.Color;
 import javax.swing.JComboBox;
 
-public class ViewSuperAdmin extends JFrame {
+public class ViewSuperAdminHomePage extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField_ID;
 	private JTable tableResults;
-	private ControllerViewSuperAdmin controller;
+	private ControllerViewSuperAdminHomePage controller;
 	private JTextField textField_name;
 	private JTextField textField_ID_delete;
 	private JTextField textField_idUpdate;
@@ -42,7 +42,7 @@ public class ViewSuperAdmin extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ViewSuperAdmin frame = new ViewSuperAdmin();
+					ViewSuperAdminHomePage frame = new ViewSuperAdminHomePage();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,9 +54,9 @@ public class ViewSuperAdmin extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ViewSuperAdmin() {
-		controller = new ControllerViewSuperAdmin(this);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ViewSuperAdminHomePage() {
+		controller = new ControllerViewSuperAdminHomePage(this);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 910, 393);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

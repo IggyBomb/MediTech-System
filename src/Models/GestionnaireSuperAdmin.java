@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import Acteurs.AgentAdministration;
@@ -31,7 +32,7 @@ public class GestionnaireSuperAdmin {
 	 * @param table The table to insert the employee into.
 	 * @return true if the employee was inserted successfully, false otherwise.
 	 */
-	public boolean insertEmployee(Employee employee) {
+	public boolean insertEmployee(Employee employee) throws SQLIntegrityConstraintViolationException  {
 		String sql = "INSERT INTO " + employee.getRole() + " (Id, Nom, Prenom, Adresse, Salaire) VALUES (?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -45,12 +46,13 @@ public class GestionnaireSuperAdmin {
 			if (rowsAffected > 0) {
 				return true;
 			}
+		} catch (SQLIntegrityConstraintViolationException e) {
+			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-
 	/**
 	 * Deletes an employee from the database.
 	 * 

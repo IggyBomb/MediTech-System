@@ -1,4 +1,4 @@
-package ViewGestionnaireAdmin;
+package ViewAdmin;
 
 import java.awt.EventQueue;
 
@@ -126,7 +126,7 @@ public class SearchByConsultID extends JFrame {
 		textField_PhysicianName.setText(consultation.getMedecin());
 		textField_date.setText(consultation.getDate().toString());
 		
-		patient = Admin.findByID(consultation.getPatient());
+		patient = Admin.findPatientByID(consultation.getPatient());
 		String nomPatient = patient.getNom() + " " + patient.getPrenom();
 		textField_Patient_Name = new JTextField();
 		textField_Patient_Name.setBounds(158, 183, 117, 19);

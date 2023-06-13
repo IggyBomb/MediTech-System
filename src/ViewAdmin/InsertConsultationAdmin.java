@@ -1,4 +1,4 @@
-package ViewGestionnaireAdmin;
+package ViewAdmin;
 
 import java.awt.EventQueue;
 
@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -232,44 +233,56 @@ public class InsertConsultationAdmin extends JFrame {
 		JButton btnCreateNew = new JButton("Create");
 		btnCreateNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
 
-				// get selected date
-				Date selectedDate = new Date(dateChooser.getDate().getTime());
-				Instant instant = Instant.ofEpochMilli(selectedDate.getTime());
-				LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+					// get selected date
+					Date selectedDate = new Date(dateChooser.getDate().getTime());
+					Instant instant = Instant.ofEpochMilli(selectedDate.getTime());
+					LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
-				// Convert java.util.Date to java.sql.Date
-				java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+					// Convert java.util.Date to java.sql.Date
+					java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
 
-				int selectedHours = hours.getValue();
-				int selectedMinutes = minutes.getValue();
-				LocalTime localTime = LocalTime.of(selectedHours, selectedMinutes);
+					int selectedHours = hours.getValue();
+					int selectedMinutes = minutes.getValue();
+					LocalTime localTime = LocalTime.of(selectedHours, selectedMinutes);
 
-				// Combine the date and time to create a LocalDateTime object
-				LocalDateTime ConsultTime = LocalDateTime.of(localDate, localTime);
-				String details = textField_details.getText();
-				Boolean insert = gestionnaire.addConsultation(new Consultation(textField_idConsultation.getText(), selectedPatientId, selectedDoctorId, details, ConsultTime));
-				if(insert) {
-					JOptionPane.showMessageDialog(contentPane, "Visit confirmed", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
-				}else {
-					JOptionPane.showMessageDialog(contentPane, "No!", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
+					// Combine the date and time to create a LocalDateTime object
+					LocalDateTime ConsultTime = LocalDateTime.of(localDate, localTime);
+					String details = textField_details.getText();
+					Boolean insert;
+					try {
+						insert = gestionnaire.addConsultation(new Consultation(textField_idConsultation.getText(), selectedPatientId, selectedDoctorId, details, ConsultTime));
+						if(insert) {
+							JOptionPane.showMessageDialog(contentPane, "Visit confirmed", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+						}else {
+							JOptionPane.showMessageDialog(getContentPane(), "Visit ID already taken!", "Visit", JOptionPane.INFORMATION_MESSAGE); 
+						}
+					} catch (SQLIntegrityConstraintViolationException e1) {
+						e1.printStackTrace();
+					}
+
+				}catch(NullPointerException e1) {
+					JOptionPane.showMessageDialog(contentPane, "Please, fill all the fields", "Create New Consultation", JOptionPane.INFORMATION_MESSAGE);
 				}
+
 			}
-			});
+		});
 		btnCreateNew.setBounds(107, 430, 85, 21);
 		contentPane.add(btnCreateNew);
-		
+
 		JButton btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textField_idConsultation.setText("");
 				textField_details.setText("");
-				
+
 			}
 		});
 		btnClear.setBounds(309, 430, 85, 21);
 		contentPane.add(btnClear);
-		
+
 		JButton btnClose = new JButton("Close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -278,5 +291,5 @@ public class InsertConsultationAdmin extends JFrame {
 		});
 		btnClose.setBounds(207, 430, 85, 21);
 		contentPane.add(btnClose);
-		}
 	}
+}

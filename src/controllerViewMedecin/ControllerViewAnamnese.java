@@ -45,6 +45,7 @@ public class ControllerViewAnamnese {
 			try {
 				modelAdmin.updateDossier(dossier);
 				JOptionPane.showMessageDialog(view.getContentPane(), "Dossier Updated", "Prescription results", JOptionPane.INFORMATION_MESSAGE);
+				view.dispose();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}

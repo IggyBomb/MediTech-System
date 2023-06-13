@@ -1,21 +1,15 @@
 package Main;
 
 import java.awt.EventQueue;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import ViewGestionnaireAdmin.ViewHomePageAdmin;
-import ViewSuperAdmin.ViewSuperAdmin;
+import ViewSuperAdmin.ViewSuperAdminHomePage;
 import viewStat.ViewHomePageStat;
-
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -91,7 +85,7 @@ public class HomePage extends JFrame {
 		btnSuperAdmin = new JButton("Super Admin");
 		btnSuperAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ViewSuperAdmin.main(null);
+				ViewSuperAdminHomePage.main(null);
 			}
 		});
 		btnSuperAdmin.setBounds(78, 209, 103, 21);
